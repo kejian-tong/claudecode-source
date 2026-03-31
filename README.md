@@ -10,6 +10,8 @@ This repository is not that official Anthropic repository. It is an independent 
 
 It does not claim affiliation with Anthropic, and it does not make claims about the provenance relationship between this snapshot and Anthropic's current upstream repository.
 
+Around March 31, 2026, community and media coverage widely credited Chaofan Shou ([@Fried_rice on X](https://x.com/Fried_rice/status/2038894956459290963)) with publicly flagging the source-map exposure that drew attention to this code snapshot. This repository includes that attribution as a reference point, but does not independently verify "first discovery" priority claims.
+
 ## Start Here
 
 - [Open interactive landing page](https://kejian-tong.github.io/claudecode-source/)
