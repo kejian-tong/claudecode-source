@@ -774,7 +774,7 @@ def render_tool_permission_matrix() -> Path:
 
 
 def render_session_lifecycle() -> Path:
-    size = (1920, 1240)
+    size = (1920, 1260)
     image = Image.new("RGBA", size, base.PALETTE["canvas_alt"])
     draw = ImageDraw.Draw(image)
     draw_title(
@@ -784,74 +784,81 @@ def render_session_lifecycle() -> Path:
     )
 
     steps = [
-        ("Entry", "A new or resumed prompt enters the long-lived runtime."),
-        ("Persist Transcript", "Messages, tool results, and sidecar metadata land in transcript storage."),
-        ("Update Tasks", "Local agents, remote agents, and notifications advance beside the transcript."),
-        ("Check Pressure", "Token budgets and history boundaries decide whether compaction is needed."),
-        ("Compact / Restore", "Older context is summarized, relinked, or resumed from stored memory."),
-        ("Resume Next Turn", "The following prompt restarts from persisted state instead of from zero."),
+        ("Entry", "A new or resumed prompt enters the runtime."),
+        ("Persist Transcript", "Messages and tool results become durable session state."),
+        ("Update Tasks", "Agents, notifications, and task registries advance in parallel."),
+        ("Check Pressure", "Budgets decide whether raw history can keep growing."),
+        ("Compact / Restore", "Older context is summarized, relinked, or resumed."),
+        ("Resume Next Turn", "The next prompt starts from saved state rather than zero."),
     ]
+    draw_kicker(draw, (68, 154), "Stateful runtime model", "blue")
+    base.draw_text(draw, (68, 206), "A session is a persisted state machine, not a stateless chat loop", base.font(30, "headline"), base.PALETTE["ink"])
+
+    outer = (56, 248, 1864, 1184)
+    base.rounded_box(image, outer, fill=base.PALETTE["paper"], outline=base.PALETTE["line"], width=1, radius=30, shadow=True, shadow_alpha=12)
+    base.draw_text(draw, (84, 274), "Turn progression", base.font(22, "headline"), base.PALETTE["ink"])
+    base.draw_text(draw, (84, 304), "The visible turn moves left to right. The same session also keeps durable substrate state underneath it.", base.font(17), base.PALETTE["muted"])
+
     step_rects: list[tuple[int, int, int, int]] = []
-    y = 226
-    step_w = 262
-    gap = 28
-    start_x = 70
-    timeline_y = 410
-    draw_kicker(draw, (70, 154), "Long-lived runtime model", "blue")
-    base.draw_text(draw, (70, 206), "A session is a persisted state machine, not a stateless chat loop", base.font(30, "headline"), base.PALETTE["ink"])
-    draw.line((90, timeline_y, 1830, timeline_y), fill=base.PALETTE["line_dark"], width=8)
+    row_y = 350
+    step_h = 158
+    gap = 18
+    total_w = outer[2] - outer[0] - 60
+    step_w = (total_w - gap * 5) // 6
+    start_x = outer[0] + 30
+    timeline_y = row_y + step_h + 20
+    draw.line((start_x, timeline_y, outer[2] - 30, timeline_y), fill=base.PALETTE["line_dark"], width=6)
 
     for idx, (title, subtitle) in enumerate(steps):
         x = start_x + idx * (step_w + gap)
-        rect = (x, y, x + step_w, y + 150)
+        rect = (x, row_y, x + step_w, row_y + step_h)
         step_rects.append(rect)
         accent_key = ACCENT_KEYS[idx % len(ACCENT_KEYS)]
         accent = base.PALETTE[accent_key]
-        base.rounded_box(image, rect, fill=accent_fill(accent_key), outline=base.with_alpha(accent, 72), width=2, radius=28, shadow=True, shadow_alpha=10)
-        badge = (x + 18, y + 18, x + 60, y + 60)
+        base.rounded_box(image, rect, fill=accent_fill(accent_key), outline=base.with_alpha(accent, 72), width=2, radius=26, shadow=True, shadow_alpha=8)
+        badge = (x + 16, row_y + 16, x + 54, row_y + 54)
         base.rounded_box(image, badge, fill=accent, radius=18)
-        base.draw_text(draw, (x + 32, y + 24), str(idx + 1), base.font(20, "headline"), base.rgba("#ffffff"))
-        title_font, title_lines = base.fit_wrapped_font(draw, title, "headline", 25, 18, step_w - 36, 54, 3, max_lines=2)
-        base.draw_text_lines(draw, (x + 18, y + 76), title_lines, title_font, accent, 3)
+        base.draw_text(draw, (x + 28, row_y + 21), str(idx + 1), base.font(18, "headline"), base.rgba("#ffffff"))
+        title_font, title_lines = base.fit_wrapped_font(draw, title, "headline", 24, 18, step_w - 32, 50, 3, max_lines=2)
+        base.draw_text_lines(draw, (x + 16, row_y + 66), title_lines, title_font, accent, 3)
         title_h = base.text_block_height(draw, title_lines, title_font, 3)
-        font_obj, lines = base.fit_wrapped_font(draw, subtitle, "body", 16, 14, step_w - 36, 54, 4, max_lines=3)
-        base.draw_text_lines(draw, (x + 18, y + 88 + title_h), lines, font_obj, base.PALETTE["muted"], 4)
+        body_font, body_lines = base.fit_wrapped_font(draw, subtitle, "body", 15, 13, step_w - 32, 52, 4, max_lines=3)
+        base.draw_text_lines(draw, (x + 16, row_y + 78 + title_h), body_lines, body_font, base.PALETTE["muted"], 4)
         if idx < len(steps) - 1:
             x1 = rect[2]
-            x2 = rect[2] + gap
-            draw.line((x1 + 6, timeline_y, x2 - 8, timeline_y), fill=base.PALETTE["line_dark"], width=6)
-            draw.polygon([(x2 - 8, timeline_y), (x2 - 20, timeline_y - 9), (x2 - 20, timeline_y + 9)], fill=base.PALETTE["line_dark"])
+            x2 = x1 + gap
+            draw.line((x1 + 6, timeline_y, x2 - 8, timeline_y), fill=base.PALETTE["line_dark"], width=5)
+            draw.polygon([(x2 - 8, timeline_y), (x2 - 18, timeline_y - 8), (x2 - 18, timeline_y + 8)], fill=base.PALETTE["line_dark"])
 
+    base.draw_text(draw, (84, 582), "Persistent state touched by the lifecycle", base.font(22, "headline"), base.PALETTE["ink"])
+    base.draw_text(draw, (84, 612), "These stores explain why long sessions, background work, and resume behave like runtime features instead of simple chat history.", base.font(17), base.PALETTE["muted"])
+
+    store_band = (84, 654, 1836, 844)
+    base.rounded_box(image, store_band, fill=base.PALETTE["slate_fill"], outline=base.PALETTE["line"], width=1, radius=26)
+    store_gap = 18
+    store_w = (store_band[2] - store_band[0] - 40 - store_gap * 2) // 3
     store_rects = [
-        ((90, 566, 566, 794), "Transcript Store", "JSONL messages, sidecar metadata, resume titles, and compact boundaries live here.", "purple"),
-        ((724, 566, 1198, 794), "Session Memory + Claude.md", "Session memory, recovered context, and session-start rebuild logic preserve continuity beyond the visible turn.", "teal"),
-        ((1354, 566, 1830, 794), "Task / Agent Registries", "Local agents, remote agents, notifications, and task state evolve beside the transcript instead of outside it.", "rose"),
+        ((store_band[0] + 20, store_band[1] + 20, store_band[0] + 20 + store_w, store_band[3] - 20), "Transcript Store", "JSONL messages, sidecar metadata, resume titles, and compact boundaries live here.", "purple"),
+        ((store_band[0] + 20 + store_w + store_gap, store_band[1] + 20, store_band[0] + 20 + store_w * 2 + store_gap, store_band[3] - 20), "Session Memory + Claude.md", "Recovered context, session memory, and rebuild logic preserve continuity across long-running work.", "teal"),
+        ((store_band[0] + 20 + (store_w + store_gap) * 2, store_band[1] + 20, store_band[2] - 20, store_band[3] - 20), "Task / Agent Registries", "Local agents, remote agents, notifications, and task state evolve beside the transcript rather than outside it.", "rose"),
     ]
     for rect, title, subtitle, accent_key in store_rects:
         accent = base.PALETTE[accent_key]
-        base.rounded_box(image, rect, fill=base.PALETTE["paper"], outline=base.with_alpha(accent, 72), width=2, radius=26)
-        base.draw_text(draw, (rect[0] + 20, rect[1] + 18), title, base.font(22, "headline"), accent)
-        font_obj, lines = base.fit_wrapped_font(draw, subtitle, "body", 17, 14, rect[2] - rect[0] - 40, 92, 5, max_lines=5)
-        base.draw_text_lines(draw, (rect[0] + 20, rect[1] + 62), lines, font_obj, base.PALETTE["ink"], 5)
+        base.rounded_box(image, rect, fill=base.PALETTE["paper"], outline=base.with_alpha(accent, 70), width=2, radius=22)
+        draw.rounded_rectangle((rect[0] + 16, rect[1] + 16, rect[0] + 24, rect[3] - 16), radius=4, fill=accent)
+        base.draw_text(draw, (rect[0] + 38, rect[1] + 18), title, base.font(22, "headline"), accent)
+        body_font, body_lines = base.fit_wrapped_font(draw, subtitle, "body", 16, 14, rect[2] - rect[0] - 54, 74, 4, max_lines=4)
+        base.draw_text_lines(draw, (rect[0] + 38, rect[1] + 58), body_lines, body_font, base.PALETTE["ink"], 4)
 
-    connectors = [
-        (step_rects[1][0] + 120, step_rects[1][3], 328, 566),
-        (step_rects[4][0] + 126, step_rects[4][3], 960, 566),
-        (step_rects[2][0] + 122, step_rects[2][3], 1592, 566),
-    ]
-    for x1, y1, x2, y2 in connectors:
-        draw.line((x1, y1, x2, y2), fill=base.PALETTE["line_dark"], width=4)
-        draw.polygon([(x2, y2), (x2 - 10, y2 - 8), (x2 + 10, y2 - 8)], fill=base.PALETTE["line_dark"])
-
-    loop_rect = (422, 864, 1498, 1138)
-    base.rounded_box(image, loop_rect, fill=base.PALETTE["paper"], outline=base.with_alpha(base.PALETTE["blue"], 80), width=2, radius=28, shadow=True, shadow_alpha=10)
-    base.draw_text(draw, (452, 892), "Why This Matters", base.font(26, "headline"), base.PALETTE["blue"])
+    note_rect = (264, 904, 1656, 1122)
+    base.rounded_box(image, note_rect, fill=base.PALETTE["blue_fill"], outline=base.with_alpha(base.PALETTE["blue"], 80), width=2, radius=28, shadow=True, shadow_alpha=10)
+    base.draw_text(draw, (300, 934), "Why This Matters", base.font(28, "headline"), base.PALETTE["blue"])
     bullets = (
-        "The transcript is a runtime substrate, not just a log. That is why resume, background work, and inspection remain possible.",
-        "Compaction is part of the normal lifecycle. It is what keeps a long session alive when raw history no longer fits.",
+        "The transcript is runtime substrate, not just a log. That is why resume, background work, and inspection remain possible.",
+        "Compaction is part of the normal lifecycle. It keeps a long session alive when raw history no longer fits.",
         "Task and agent registries share the same continuity boundary, which is why post-turn work can keep progressing after the visible response ends.",
     )
-    base.draw_bullet_list(draw, 452, 940, 1000, bullets, base.PALETTE["blue"], "body", 18, 15)
+    base.draw_bullet_list(draw, 300, 986, 1280, bullets, base.PALETTE["blue"], "body", 18, 15)
     out_path = OUT_DIR / "session-lifecycle.png"
     image.save(out_path)
     return out_path
@@ -867,26 +874,38 @@ def render_extension_ecosystem(metrics: CodebaseMetrics) -> Path:
         "How MCP, plugins, skills, hooks, and remote execution wrap around the core Claude Code runtime.",
     )
 
-    draw_kicker(draw, (66, 152), "Hub and spoke view", "teal")
+    draw_kicker(draw, (66, 152), "Three-zone map", "teal")
     base.draw_text(draw, (66, 204), "How the extension surface wraps around the runtime", base.font(30, "headline"), base.PALETTE["ink"])
-    base.draw_text(draw, (66, 242), "This codebase behaves like a runtime platform. MCP, hooks, skills, plugins, and remote execution expand the trust boundary around QueryEngine and the tool loop.", base.font(18), base.PALETTE["muted"])
+    base.draw_text(draw, (66, 242), "The codebase behaves like a runtime platform: extension families widen the same core session engine rather than bypassing it.", base.font(18), base.PALETTE["muted"])
 
-    center = (706, 312, 1214, 804)
-    nodes = [
-        ((132, 318, 500, 498), "MCP Layer", f"{metrics.mcp_files} files across clients, resources, auth, and transport plumbing.", "teal"),
-        ((1420, 318, 1788, 498), "Hook Runtime", f"{metrics.hook_files} hook files plus the shared pre/post tool interception path.", "orange"),
-        ((162, 548, 530, 728), "Skill Surfaces", f"{metrics.bundled_skill_registrations} bundled registrations plus repo, plugin, and MCP skill loading.", "purple"),
-        ((1390, 548, 1758, 728), "Plugin Layer", f"{metrics.plugin_files} plugin-facing files for loading, caching, and marketplace-style plumbing.", "rose"),
-        ((302, 828, 670, 1008), "Remote + Team Execution", "Remote agents, teammates, worktrees, and session bridges extend runtime reach beyond a single local turn.", "green"),
-        ((1250, 828, 1618, 1008), "IDE / Browser / Web", "Editor integration, browser-facing skills, and web tools broaden both entry and action surfaces.", "blue"),
+    outer = (56, 286, 1864, 1072)
+    base.rounded_box(image, outer, fill=base.PALETTE["paper"], outline=base.PALETTE["line"], width=1, radius=30, shadow=True, shadow_alpha=12)
+
+    center = (650, 352, 1270, 880)
+    left_nodes = [
+        ((110, 362, 500, 528), "MCP Layer", f"{metrics.mcp_files} files across clients, resources, auth, and transport plumbing.", "teal"),
+        ((110, 568, 500, 734), "Skill Surfaces", f"{metrics.bundled_skill_registrations} bundled registrations plus repo, plugin, and MCP skill loading.", "purple"),
+        ((110, 774, 500, 940), "Remote + Team Execution", "Remote agents, teammates, worktrees, and session bridges extend runtime reach beyond a single local turn.", "green"),
+    ]
+    right_nodes = [
+        ((1420, 362, 1810, 528), "Hook Runtime", f"{metrics.hook_files} hook files plus the shared pre/post tool interception path.", "orange"),
+        ((1420, 568, 1810, 734), "Plugin Layer", f"{metrics.plugin_files} plugin-facing files for loading, caching, and marketplace-style plumbing.", "rose"),
+        ((1420, 774, 1810, 940), "IDE / Browser / Web", "Editor integration, browser-facing skills, and web tools broaden both entry and action surfaces.", "blue"),
     ]
 
-    for rect, _, _, accent_key in nodes:
+    base.draw_text(draw, (110, 326), "Capability families", base.font(18, "headline"), base.PALETTE["muted"])
+    base.draw_text(draw, (1420, 326), "Wrapper and integration surfaces", base.font(18, "headline"), base.PALETTE["muted"])
+
+    for rect, _, _, accent_key in left_nodes + right_nodes:
         draw_link(draw, center, rect, base.PALETTE[accent_key], width=4)
 
     base.rounded_box(image, center, fill=base.PALETTE["paper"], outline=base.with_alpha(base.PALETTE["blue"], 80), width=2, radius=40, shadow=True, shadow_alpha=14)
-    base.draw_text(draw, (776, 346), "Claude Code Runtime", base.font(34, "headline"), base.PALETTE["ink"])
-    base.draw_text(draw, (776, 392), "QueryEngine, session state, and permissioned tool orchestration", base.font(19), base.PALETTE["muted"])
+    header_rect = (682, 382, 1238, 506)
+    base.rounded_box(image, header_rect, fill=base.PALETTE["blue_fill"], outline=base.with_alpha(base.PALETTE["blue"], 54), width=1, radius=24)
+    draw_kicker(draw, (708, 404), "Core runtime", "blue")
+    base.draw_text(draw, (708, 438), "Claude Code Runtime", base.font(34, "headline"), base.PALETTE["ink"])
+    base.draw_text(draw, (708, 488), "QueryEngine, session state, and permissioned tool orchestration", base.font(18), base.PALETTE["muted"])
+
     chip_specs = [
         ("Tool dirs", str(metrics.tool_directories), "green"),
         ("Commands", str(metrics.command_surfaces), "orange"),
@@ -894,31 +913,33 @@ def render_extension_ecosystem(metrics: CodebaseMetrics) -> Path:
         ("Dyn. imports", str(metrics.dynamic_imports), "teal"),
     ]
     chip_rects = [
-        (770, 452, 956, 542),
-        (968, 452, 1154, 542),
-        (770, 558, 956, 648),
-        (968, 558, 1154, 648),
+        (706, 542, 956, 638),
+        (976, 542, 1226, 638),
+        (706, 658, 956, 754),
+        (976, 658, 1226, 754),
     ]
     for rect, (label, value, accent_key) in zip(chip_rects, chip_specs):
         draw_stat_chip(image, rect, label, value, accent_key)
-    core_lines = (
-        "The runtime sits at the center because extensions do not bypass it.",
-        "They widen the trust boundary, capability surface, and operational complexity around the same core session engine.",
-    )
-    base.draw_bullet_list(draw, 772, 686, 390, core_lines, base.PALETTE["blue"], "body", 17, 15)
 
-    for rect, title, subtitle, accent_key in nodes:
+    insight_rect = (706, 778, 1226, 846)
+    base.rounded_box(image, insight_rect, fill=base.PALETTE["slate_fill"], outline=base.PALETTE["line"], width=1, radius=18)
+    insight = "Extensions widen the trust boundary, capability surface, and operational complexity around one shared runtime."
+    insight_font, insight_lines = base.fit_wrapped_font(draw, insight, "body", 16, 14, 480, 42, 4, max_lines=2)
+    base.draw_text_lines(draw, (726, 794), insight_lines, insight_font, base.PALETTE["ink"], 4)
+
+    for rect, title, subtitle, accent_key in left_nodes + right_nodes:
         accent = base.PALETTE[accent_key]
         base.rounded_box(image, rect, fill=accent_fill(accent_key), outline=base.with_alpha(accent, 82), width=2, radius=28, shadow=True, shadow_alpha=8)
-        base.draw_text(draw, (rect[0] + 22, rect[1] + 22), title, base.font(22, "headline"), accent)
-        font_obj, lines = base.fit_wrapped_font(draw, subtitle, "body", 17, 14, rect[2] - rect[0] - 40, 88, 4, max_lines=4)
-        base.draw_text_lines(draw, (rect[0] + 22, rect[1] + 62), lines, font_obj, base.PALETTE["ink"], 4)
+        draw.rounded_rectangle((rect[0] + 18, rect[1] + 18, rect[0] + 26, rect[3] - 18), radius=4, fill=accent)
+        base.draw_text(draw, (rect[0] + 42, rect[1] + 20), title, base.font(22, "headline"), accent)
+        font_obj, lines = base.fit_wrapped_font(draw, subtitle, "body", 17, 14, rect[2] - rect[0] - 60, 82, 4, max_lines=4)
+        base.draw_text_lines(draw, (rect[0] + 42, rect[1] + 58), lines, font_obj, base.PALETTE["ink"], 4)
 
-    footer_rect = (56, 1094, 1864, 1198)
+    footer_rect = (56, 1110, 1864, 1208)
     base.rounded_box(image, footer_rect, fill=base.PALETTE["paper"], outline=base.PALETTE["line"], width=1, radius=24)
     footer = "Reading: this is not only a CLI. It is a runtime platform with a wide extension surface, where MCP and skills are especially prominent and built-in plugin support looks comparatively early-stage."
     footer_font, footer_lines = base.fit_wrapped_font(draw, footer, "body", 18, 16, 1760, 60, 4, max_lines=3)
-    base.draw_text_lines(draw, (86, 1120), footer_lines, footer_font, base.PALETTE["muted"], 4)
+    base.draw_text_lines(draw, (86, 1136), footer_lines, footer_font, base.PALETTE["muted"], 4)
     out_path = OUT_DIR / "extension-ecosystem.png"
     image.save(out_path)
     return out_path
