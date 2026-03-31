@@ -2,6 +2,12 @@
 
 This repository packages a deep source-level analysis of the Claude Code snapshot in `src/`, plus HTML reports, architecture visuals, GIF walkthroughs, and maintainer/user guides.
 
+## Provenance Note
+
+This is an independent analysis repository, not an official Anthropic repository or official Claude Code release.
+
+It analyzes the Claude Code source snapshot included here under `src/`. The work in this repository is the analysis, documentation, and visualization layer built on top of that snapshot. It does not make claims about how the snapshot became public.
+
 ## Start Here
 
 - [Open interactive landing page](https://kejian-tong.github.io/claudecode-source/)
