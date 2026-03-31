@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Claude Code Source Analysis Report</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --paper: rgba(255, 251, 244, 0.86);
+      --paper-strong: #fffaf2;
+      --ink: #1f1a17;
+      --muted: #5e554d;
+      --line: rgba(58, 42, 27, 0.14);
+      --accent: #b34a18;
+      --accent-2: #126067;
+      --accent-3: #8c7d27;
+      --shadow: 0 18px 44px rgba(52, 37, 23, 0.12);
+      --radius: 22px;
+      --mono: "SFMono-Regular", "Menlo", "Consolas", "Liberation Mono", monospace;
+      --sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(179, 74, 24, 0.12), transparent 32%),
+        radial-gradient(circle at top right, rgba(18, 96, 103, 0.14), transparent 28%),
+        linear-gradient(180deg, #f7f1e7 0%, #eee4d5 52%, #e8dcc9 100%);
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+
+    .page {
+      width: min(1300px, calc(100vw - 32px));
+      margin: 24px auto 48px;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px 18px;
+      backdrop-filter: blur(18px);
+    }
+
+    .toc h2 {
+      margin: 0 0 12px;
+      font: 700 0.82rem/1 var(--sans);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .toc a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 7px 0;
+      font-size: 0.95rem;
+    }
+
+    .toc a:hover {
+      color: var(--ink);
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .hero,
+    section,
+    .metrics-grid {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero {
+      padding: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -70px -90px auto;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(18, 96, 103, 0.16), transparent 70%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 0.95;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 70ch;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .metrics-grid {
+      margin-top: 24px;
+      padding: 22px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric {
+      background: rgba(255, 250, 242, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.7rem;
+      line-height: 1;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    section {
+      margin-top: 24px;
+      padding: 28px 30px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-family: var(--serif);
+      font-size: 2rem;
+      line-height: 1.05;
+    }
+
+    h3 {
+      margin: 26px 0 10px;
+      font-size: 1.12rem;
+      line-height: 1.2;
+      color: var(--accent-2);
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 14px 20px;
+      padding: 0;
+    }
+
+    li {
+      margin: 0 0 8px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255, 250, 242, 0.84);
+      font-size: 0.9rem;
+    }
+
+    .callout {
+      padding: 16px 18px;
+      border-left: 4px solid var(--accent);
+      background: rgba(179, 74, 24, 0.07);
+      border-radius: 16px;
+      margin: 16px 0;
+    }
+
+    .twocol {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: rgba(255, 250, 242, 0.84);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      margin: 12px 0 16px;
+      overflow: hidden;
+      border-radius: 16px;
+      background: rgba(255, 250, 242, 0.86);
+      border: 1px solid var(--line);
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--accent);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(179, 74, 24, 0.06);
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code {
+      font-family: var(--mono);
+      font-size: 0.92em;
+      background: rgba(20, 20, 20, 0.05);
+      border-radius: 6px;
+      padding: 0.15em 0.35em;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 1080px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+      }
+
+      .metrics-grid,
+      .twocol {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 700px) {
+      .page {
+        width: min(100vw - 18px, 1000px);
+        margin: 10px auto 28px;
+      }
+
+      .hero,
+      section,
+      .metrics-grid,
+      .toc {
+        padding: 18px;
+      }
+
+      .metrics-grid,
+      .twocol {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="toc">
+      <h2>Contents</h2>
+      <a href="#summary">Summary</a>
+      <a href="#metrics">Metrics</a>
+      <a href="#release-map">Feature Maturity</a>
+      <a href="#shape">What The System Is</a>
+      <a href="#flow">Runtime Flow</a>
+      <a href="#subsystems">Subsystems</a>
+      <a href="#patterns">Patterns</a>
+      <a href="#strengths">Strengths</a>
+      <a href="#risks">Risks</a>
+      <a href="#priorities">Priorities</a>
+      <a href="#judgment">Final Judgment</a>
+    </aside>
+
+    <main class="content">
+      <div class="hero">
+        <p class="eyebrow">Engineering Review</p>
+        <h1>Claude Code Source Analysis</h1>
+        <p>
+          This report analyzes the <code>src/</code> snapshot in this repository as a product-scale Bun/TypeScript terminal application.
+          The codebase is best understood as a hybrid of interactive REPL, headless SDK runtime, tool execution engine, agent platform,
+          extension ecosystem, and enterprise integration surface.
+        </p>
+        <div class="pill-row">
+          <div class="pill">Bun runtime</div>
+          <div class="pill">React + Ink UI</div>
+          <div class="pill">Anthropic SDK</div>
+          <div class="pill">MCP client/server</div>
+          <div class="pill">Plugins, skills, hooks</div>
+          <div class="pill">Remote + enterprise features</div>
+        </div>
+      </div>
+
+      <div class="metrics-grid" id="metrics">
+        <div class="metric"><strong>1,902</strong><span>source files under <code>src/</code></span></div>
+        <div class="metric"><strong>513,237</strong><span>approx. code lines in TS/TSX/JS/JSX</span></div>
+        <div class="metric"><strong>90</strong><span>unique compile-time feature flags</span></div>
+        <div class="metric"><strong>395</strong><span>files importing <code>react/compiler-runtime</code></span></div>
+      </div>
+
+      <section id="summary">
+        <h2>Executive Summary</h2>
+        <p>
+          This is a large, production-grade source tree for a terminal-native AI coding product. It is not architected as a minimal CLI and
+          not architected as a cleanly separated service mesh. It is a pragmatic monolith with real platform ambitions.
+        </p>
+        <div class="callout">
+          The strongest qualities are operational realism, security around shell/tool use, startup-performance discipline, and deep extensibility.
+          The biggest liabilities are structural concentration in a handful of giant files, a very broad <code>utils/</code> dependency hub,
+          and the testing/verification uncertainty created by this partial source snapshot.
+        </div>
+        <div class="twocol">
+          <div class="card">
+            <h3>What It Does Well</h3>
+            <ul>
+              <li>Supports interactive REPL, headless SDK, MCP server, remote sessions, agents, plugins, skills, hooks, and enterprise settings.</li>
+              <li>Shows mature handling of retries, compaction, resume, transcript persistence, and background task state.</li>
+              <li>Implements unusually serious shell safety and permission controls for an AI tool-runner.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Where It Strains</h3>
+            <ul>
+              <li>Several architectural hotspot files exceed a comfortable review and ownership size.</li>
+              <li><code>utils/</code> has become a broad application substrate rather than a narrow helper layer.</li>
+              <li>Feature-flag branching and module singletons make global reasoning harder than it should be.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="release-map">
+        <h2>Feature Maturity Map</h2>
+        <p>
+          The original version of this report did not explicitly separate broadly shipped functionality from preview, internal, or future-facing
+          surfaces. This section adds that distinction, but it should be read as a source-grounded maturity inference rather than a claim about
+          public release history or external marketing state.
+        </p>
+        <table>
+          <thead>
+            <tr><th>Feature Family</th><th>Key Source Evidence</th><th>Best Reading From Source</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>BUDDY</code> / companion</td><td><code>src/buddy/</code>, <code>PromptInput.tsx</code>, <code>REPL.tsx</code>, config, and app state all reference it; runtime paths are gated by <code>feature('BUDDY')</code>.</td><td>Real implemented feature, but gated rather than universally on.</td></tr>
+            <tr><td>Voice mode</td><td><code>src/services/voiceStreamSTT.ts</code> says it is only reachable in builds gated by <code>feature('VOICE_MODE')</code>.</td><td>Real implemented feature under rollout/build gating.</td></tr>
+            <tr><td>KAIROS / Brief / Proactive / Channels</td><td>Large cross-cutting surface in <code>src/main.tsx</code>, commands, tools, and UI; repeatedly feature-gated.</td><td>Major staged-release or build-variant family, not baseline behavior.</td></tr>
+            <tr><td><code>TEAMMEM</code></td><td><code>src/services/teamMemorySync/</code> is substantial, but guarded by <code>feature('TEAMMEM')</code>.</td><td>Real sync subsystem, but conditional rollout/build surface.</td></tr>
+            <tr><td>Computer Use MCP</td><td><code>src/utils/computerUse/</code> plus CLI <code>--computer-use-mcp</code> entry path.</td><td>Deep implementation, but platform/build constrained rather than default.</td></tr>
+            <tr><td>PowerShell tool</td><td>Full <code>src/tools/PowerShellTool/</code> exists; tip registry explicitly says <code>preview</code>.</td><td>Implemented preview feature.</td></tr>
+            <tr><td>Remote canonical skills</td><td><code>src/tools/SkillTool/SkillTool.ts</code> labels them <code>ant-only experimental</code>.</td><td>Experimental or limited-distribution surface.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          The overall picture is not "mostly unreleased." The codebase looks like a shipped core product with a large experimental and
+          build-variant perimeter around it.
+        </div>
+        <div class="twocol">
+          <div class="card">
+            <h3>Clearly Shipped / Core Product Surfaces</h3>
+            <ul>
+              <li>CLI and REPL interaction model</li>
+              <li>Headless structured I/O and SDK-compatible runtime paths</li>
+              <li>Transcript persistence, resume, compaction, and long-lived session handling</li>
+              <li>Permissioned tool execution for files, shell, web, and MCP-backed flows</li>
+              <li>Plugins, hooks, and skills as normal runtime surfaces rather than lab-only experiments</li>
+            </ul>
+            <p>
+              These areas show multi-layer implementation depth across bootstrap, UI, runtime, persistence, and policy code rather than existing
+              as isolated stubs.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Preview / Gated / Phased-Rollout Surfaces</h3>
+            <ul>
+              <li>Voice mode, which is implemented but guarded behind <code>feature('VOICE_MODE')</code></li>
+              <li>The PowerShell tool, explicitly labeled <code>preview</code> in <code>src/services/tips/tipRegistry.ts</code></li>
+              <li>BUDDY / companion pet interactions, which have a dedicated feature area but are gated behind <code>feature('BUDDY')</code></li>
+              <li>KAIROS assistant-mode features, including brief, channels, and proactive variants</li>
+              <li>Team memory synchronization behind <code>feature('TEAMMEM')</code></li>
+              <li>Agent trigger and scheduler-adjacent flows, plus remote canonical skills</li>
+              <li>Computer Use MCP integration, which is implemented substantially but appears platform/build constrained</li>
+            </ul>
+            <p>
+              These paths are real, but the source repeatedly marks them as feature-gated, GrowthBook-gated, <code>ant-only</code>, or
+              <code>experimental</code>.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 18px;">
+          <h3>Internal-Only / Future-Facing / Build-Variant Surfaces</h3>
+          <ul>
+            <li><code>src/moreright/useMoreRight.tsx</code> is explicitly stubbed for external builds and says the real hook is internal only.</li>
+            <li><code>src/services/api/claude.ts</code> contains internal-only research capture paths.</li>
+            <li>Some remote/session/channel capabilities are present as specialized build variants rather than universal product surfaces.</li>
+            <li>Multiple comments describe capabilities as <code>ant-only</code>, which strongly implies internal or limited-distribution variants.</li>
+          </ul>
+          <p>
+            This matters because the repository is not simply "one product." It is one core runtime carrying a family of adjacent product modes,
+            internal builds, and staged-release features.
+          </p>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Source Evidence</th><th>Why It Matters</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>src/services/voiceStreamSTT.ts</code></td><td>File header says voice is only reachable in builds gated by <code>feature('VOICE_MODE')</code>.</td></tr>
+            <tr><td><code>src/services/tips/tipRegistry.ts</code></td><td>PowerShell tool is explicitly described as <code>preview</code>.</td></tr>
+            <tr><td><code>src/buddy/</code>, <code>PromptInput.tsx</code>, <code>REPL.tsx</code></td><td>Companion/pet UI exists across config, app state, prompt input, and REPL rendering, but is explicitly gated by <code>feature('BUDDY')</code>.</td></tr>
+            <tr><td><code>src/tools/SkillTool/SkillTool.ts</code></td><td>Remote canonical skills are described as <code>ant-only experimental</code>.</td></tr>
+            <tr><td><code>src/moreright/useMoreRight.tsx</code></td><td>Comment says the real hook is internal only.</td></tr>
+            <tr><td><code>src/utils/computerUse/</code>, <code>src/entrypoints/cli.tsx</code></td><td>Computer Use has a real MCP/server/tool stack, but the entry path and native dependencies indicate a constrained platform/build variant rather than a universal default feature.</td></tr>
+            <tr><td><code>src/main.tsx</code> and related UI/runtime files</td><td>KAIROS, BRIEF, PROACTIVE, CHANNELS, and TEAMMEM repeatedly appear as build-time or runtime gates.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="shape">
+        <h2>What The System Actually Is</h2>
+        <p>
+          The source tree combines multiple product surfaces under one runtime model:
+        </p>
+        <ul>
+          <li>Interactive terminal REPL built with React and Ink</li>
+          <li>Headless structured I/O and SDK-compatible execution</li>
+          <li>Tool execution platform with permissions, hooks, telemetry, and batching</li>
+          <li>Agent orchestration layer with local, remote, and in-process teammate modes</li>
+          <li>MCP client support plus an MCP server facade over Claude Code tools</li>
+          <li>Plugin, marketplace, skill, and hook extension ecosystems</li>
+          <li>Enterprise policy, settings sync, remote-managed settings, and shared team memory</li>
+        </ul>
+        <p>
+          The recurring architectural nouns are <code>messages</code>, <code>tools</code>, <code>commands</code>, <code>sessions</code>,
+          <code>tasks</code>, <code>settings</code>, <code>agents</code>, and <code>permissions</code>. That conceptual consistency is one of
+          the reasons the repo remains understandable despite its size.
+        </p>
+      </section>
+
+      <section>
+        <h2>Evidence Snapshot</h2>
+        <table>
+          <thead>
+            <tr><th>Metric</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Top-level command entries under <code>src/commands</code></td><td>101</td></tr>
+            <tr><td>Top-level tool directories under <code>src/tools</code></td><td>42</td></tr>
+            <tr><td><code>buildTool(...)</code> call sites</td><td>40</td></tr>
+            <tr><td><code>dynamic import(...)</code> occurrences</td><td>645</td></tr>
+            <tr><td><code>require(...)</code> occurrences</td><td>277</td></tr>
+            <tr><td><code>type</code> declarations</td><td>9,277</td></tr>
+            <tr><td><code>class</code> declarations</td><td>188</td></tr>
+            <tr><td><code>TODO</code> markers</td><td>138</td></tr>
+            <tr><td>Conventional test files visible in this snapshot</td><td>Effectively none</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Largest files</h3>
+        <table>
+          <thead>
+            <tr><th>File</th><th>LOC</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>src/cli/print.ts</code></td><td>5,594</td></tr>
+            <tr><td><code>src/utils/messages.ts</code></td><td>5,512</td></tr>
+            <tr><td><code>src/utils/sessionStorage.ts</code></td><td>5,105</td></tr>
+            <tr><td><code>src/utils/hooks.ts</code></td><td>5,022</td></tr>
+            <tr><td><code>src/screens/REPL.tsx</code></td><td>5,005</td></tr>
+            <tr><td><code>src/main.tsx</code></td><td>4,683</td></tr>
+            <tr><td><code>src/utils/bash/bashParser.ts</code></td><td>4,436</td></tr>
+            <tr><td><code>src/utils/attachments.ts</code></td><td>3,997</td></tr>
+            <tr><td><code>src/services/api/claude.ts</code></td><td>3,419</td></tr>
+            <tr><td><code>src/services/mcp/client.ts</code></td><td>3,348</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Feature-flag profile</h3>
+        <table>
+          <thead>
+            <tr><th>Flag</th><th>Occurrences</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>KAIROS</code></td><td>154</td></tr>
+            <tr><td><code>TRANSCRIPT_CLASSIFIER</code></td><td>107</td></tr>
+            <tr><td><code>TEAMMEM</code></td><td>51</td></tr>
+            <tr><td><code>VOICE_MODE</code></td><td>46</td></tr>
+            <tr><td><code>BASH_CLASSIFIER</code></td><td>45</td></tr>
+            <tr><td><code>KAIROS_BRIEF</code></td><td>39</td></tr>
+            <tr><td><code>PROACTIVE</code></td><td>37</td></tr>
+            <tr><td><code>COORDINATOR_MODE</code></td><td>32</td></tr>
+            <tr><td><code>BRIDGE_MODE</code></td><td>28</td></tr>
+            <tr><td><code>EXPERIMENTAL_SKILL_SEARCH</code></td><td>21</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="flow">
+        <h2>Runtime Flow</h2>
+
+        <h3>Bootstrap and fast paths</h3>
+        <p>
+          <code>src/entrypoints/cli.tsx</code> is intentionally lean. It fast-paths version output, prompt dumping, bridge mode, daemon mode,
+          background session operations, environment runners, and worktree/tmux flows before the full app is loaded. This is mature startup
+          engineering, not incidental optimization.
+        </p>
+
+        <h3>Main initialization</h3>
+        <p>
+          <code>src/main.tsx</code> is the real bootstrap hub. It prefetches expensive platform state, initializes settings and policy, loads
+          plugins and skills, resolves tools and commands, configures analytics, restores sessions, and decides which runtime surface to enter.
+          The file’s comments reveal active attention to import timing and startup cost.
+        </p>
+
+        <h3>Interactive and headless split</h3>
+        <p>
+          The application then diverges into two primary execution styles:
+        </p>
+        <ul>
+          <li><code>src/screens/REPL.tsx</code> for the full interactive terminal shell</li>
+          <li><code>src/cli/print.ts</code> for the headless structured I/O and SDK path</li>
+        </ul>
+        <p>
+          This is a key architectural point. The codebase does not treat the REPL as the only first-class path.
+        </p>
+
+        <h3>Input to query</h3>
+        <p>
+          <code>src/utils/processUserInput/processUserInput.ts</code> converts raw user input into commands, messages, attachments, or query
+          requests after hooks, slash commands, and context enrichment have been applied.
+        </p>
+
+        <h3>Conversation loop</h3>
+        <p>
+          <code>src/QueryEngine.ts</code> owns conversation/session state, while <code>src/query.ts</code> owns the lower-level query loop:
+          model calls, tool execution rounds, compact/recovery logic, and stop hooks. This is a clean split compared with the rest of the repo.
+        </p>
+
+        <h3>Tool execution and session persistence</h3>
+        <p>
+          Tools execute through <code>src/services/tools/toolExecution.ts</code> and <code>toolOrchestration.ts</code>; transcripts and sidecar
+          state are persisted through <code>src/utils/sessionStorage.ts</code>. That persistence layer is a major reason resume, background
+          tasks, remote workflows, and compaction can coexist.
+        </p>
+      </section>
+
+      <section id="subsystems">
+        <h2>Subsystem Analysis</h2>
+
+        <div class="twocol">
+          <div class="card">
+            <h3>UI and App State</h3>
+            <p>
+              <code>src/screens/REPL.tsx</code>, <code>src/state/AppStateStore.ts</code>, and <code>src/state/AppState.tsx</code> define a
+              broad, custom external store architecture. It is efficient enough for a TUI, but the state model spans too many product domains.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Query Runtime</h3>
+            <p>
+              <code>src/QueryEngine.ts</code> and <code>src/query.ts</code> form one of the cleanest seams in the codebase: session ownership
+              on one side, turn-loop mechanics on the other.
+            </p>
+          </div>
+        </div>
+
+        <h3>Tooling platform</h3>
+        <p>
+          The tool layer is a major strength. <code>src/Tool.ts</code> defines a rich contract, <code>src/tools.ts</code> assembles the active
+          tool pool, and the execution stack handles schema validation, progress, permission gating, telemetry, result processing, and
+          concurrency-safe batching.
+        </p>
+
+        <h3>Permissions and shell safety</h3>
+        <p>
+          This is unusually robust. Files like <code>src/utils/permissions/permissionSetup.ts</code>,
+          <code>src/tools/BashTool/bashSecurity.ts</code>, and <code>src/tools/BashTool/readOnlyValidation.ts</code> show defense-in-depth:
+          dangerous permission-rule detection, parser-aware shell validation, read-only command allowlists, and separate PowerShell handling.
+        </p>
+
+        <h3>Agents, tasks, and teammate execution</h3>
+        <p>
+          The agent system is not a superficial background job wrapper. It supports local agents, remote agents, in-process teammates, worktree
+          isolation, remote isolation, foreground/background semantics, and leader-mediated permission flows.
+        </p>
+
+        <h3>MCP client and server support</h3>
+        <p>
+          The MCP subsystem is fully integrated. <code>src/services/mcp/client.ts</code> handles multiple transports, auth, resources,
+          tool/output normalization, and retries. <code>src/entrypoints/mcp.ts</code> exposes Claude Code tools outward via an MCP server.
+        </p>
+
+        <h3>Plugin, marketplace, skills, and hooks ecosystem</h3>
+        <p>
+          The extension story is first-class. Plugin loading, marketplace caching, bundled and disk skills, and lifecycle hooks all interact with
+          settings, permissions, commands, and telemetry. This is platform thinking.
+        </p>
+
+        <h3>Persistence, compaction, and recovery</h3>
+        <p>
+          <code>src/utils/sessionStorage.ts</code> and <code>src/services/compact/compact.ts</code> show deep investment in long-running
+          sessions: JSONL transcripts, compatibility handling, tombstones, transcript size caps, attachment reinjection, and recovery loops for
+          prompt-too-long and resume scenarios.
+        </p>
+
+        <h3>Enterprise and remote features</h3>
+        <p>
+          Remote-managed settings, settings sync, team memory sync, and remote session management all show strong enterprise-product maturity.
+          They use checksum/delta logic, fail-open behavior where appropriate, and explicit eligibility checks.
+        </p>
+      </section>
+
+      <section id="patterns">
+        <h2>Architectural Patterns</h2>
+        <div class="twocol">
+          <div class="card">
+            <h3>Feature-flag-first architecture</h3>
+            <p>
+              Build-time flags are part of the architecture. They are used not only for experiments but for dead-code elimination and variant
+              shaping across assistant mode, proactive flows, bridge mode, MCP variants, compaction paths, and more.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Performance-aware lazy loading</h3>
+            <p>
+              The high dynamic-import count and explicit fast-path code indicate a team that is actively fighting cold-start and module-load
+              overhead.
+            </p>
+          </div>
+          <div class="card">
+            <h3><code>utils/</code> as internal platform</h3>
+            <p>
+              Import-edge data shows <code>utils/</code> is the dependency center of the codebase. This enabled rapid evolution, but it also
+              weakens architectural boundaries.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Type- and schema-heavy design</h3>
+            <p>
+              The heavy use of Zod and TypeScript types is a strength. It suits tool contracts, plugin manifests, settings schemas, SDK payloads,
+              and MCP data interchange.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="strengths">
+        <h2>Strengths</h2>
+        <ul>
+          <li>Broad product scope held together by a coherent runtime model around messages, tools, sessions, and permissions.</li>
+          <li>Strong operational realism: retries, compaction, transcript repair, session persistence, and background task mechanics are all production-grade.</li>
+          <li>Security posture around shell and permission flows is materially stronger than typical AI tool-runner implementations.</li>
+          <li>The extension model is deep and consistent: plugins, skills, hooks, MCP, and SDK surfaces are not afterthoughts.</li>
+          <li>Startup-performance care is visible throughout the entrypoint architecture.</li>
+          <li>Telemetry discipline is unusually careful, including explicit marker types for non-sensitive analytics payloads.</li>
+        </ul>
+      </section>
+
+      <section id="risks">
+        <h2>Risks and Technical Debt</h2>
+        <h3>Hotspot concentration</h3>
+        <p>
+          Several files are large enough to be ownership and review risks: <code>src/cli/print.ts</code>, <code>src/main.tsx</code>,
+          <code>src/screens/REPL.tsx</code>, <code>src/utils/messages.ts</code>, <code>src/utils/sessionStorage.ts</code>, and
+          <code>src/utils/hooks.ts</code>.
+        </p>
+
+        <h3><code>utils/</code> boundary erosion</h3>
+        <p>
+          The biggest structural issue is that <code>utils/</code> no longer behaves like a helper layer. It contains domain logic, persistence,
+          policy, orchestration, telemetry, platform interop, and more.
+        </p>
+
+        <h3>Variant complexity</h3>
+        <p>
+          With 90 feature flags, the codebase effectively contains many related products. That raises testing burden, dead-path risk, and the
+          cost of safe refactoring.
+        </p>
+
+        <h3>Global state and singletons</h3>
+        <p>
+          Bootstrap state, caches, and singleton managers are pragmatic, but they create hidden coupling and sequencing concerns across a very
+          large runtime.
+        </p>
+
+        <h3>Snapshot verification gap</h3>
+        <p>
+          This repository snapshot does not visibly include a conventional automated test suite, build config, or package metadata. That limits
+          confidence about how the full project verifies variant-heavy behavior.
+        </p>
+      </section>
+
+      <section id="priorities">
+        <h2>Recommended Priorities</h2>
+        <table>
+          <thead>
+            <tr><th>Horizon</th><th>Priority</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Near-term</td>
+              <td>Split the major hotspot files, document the real runtime architecture, and add contract tests around permissions, session restore, compaction, plugins, and MCP config flows.</td>
+            </tr>
+            <tr>
+              <td>Mid-term</td>
+              <td>Reduce direct dependency sprawl into <code>utils/</code> by introducing clearer domain services for session, extension, tool, and policy logic.</td>
+            </tr>
+            <tr>
+              <td>Longer-term</td>
+              <td>Invest in build-variant verification and treat feature-flag combinations as first-class release surfaces rather than incidental branches.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="judgment">
+        <h2>Final Judgment</h2>
+        <p>
+          This codebase is best described as a product-scale terminal agent platform implemented as a pragmatic monolith. It is not “clean” in the
+          abstract architecture sense, but it is deeply experienced code: the kind that has clearly accumulated solutions to real incidents,
+          scale problems, safety concerns, and product expansion over time.
+        </p>
+        <p>
+          I would not try to rewrite this system from scratch. I would preserve its runtime behavior and focus on structural improvements:
+          hotspot decomposition, stronger subsystem boundaries, better documentation, and higher-confidence regression coverage.
+        </p>
+        <p class="footer-note">
+          Scope note: this report is based on the <code>src/</code> snapshot present in the repository root on March 31, 2026.
+        </p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

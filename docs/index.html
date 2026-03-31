@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Claude Code Source Atlas</title>
+    <style>
+      :root {
+        --bg: #f5f2ea;
+        --bg-soft: #fcfbf7;
+        --paper: rgba(255, 255, 255, 0.86);
+        --line: #d9d3c7;
+        --ink: #162030;
+        --muted: #5e6b7e;
+        --blue: #2563eb;
+        --green: #14946c;
+        --orange: #d97706;
+        --purple: #7c3aed;
+        --teal: #0f918f;
+        --rose: #e11d48;
+        --shadow: 0 20px 48px rgba(19, 31, 54, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 34%),
+          radial-gradient(circle at top right, rgba(16, 148, 108, 0.08), transparent 28%),
+          linear-gradient(180deg, #f8f6ef 0%, #f1ede4 100%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 28px 28px 80px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 22px;
+        align-items: stretch;
+      }
+
+      .panel {
+        background: var(--paper);
+        border: 1px solid rgba(217, 211, 199, 0.94);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+      }
+
+      .hero-copy {
+        padding: 32px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(22, 32, 48, 0.06);
+        color: var(--muted);
+        font-size: 14px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 20px 0 10px;
+        font-size: clamp(40px, 6vw, 72px);
+        line-height: 0.98;
+      }
+
+      .hero-copy p {
+        max-width: 70ch;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .cta-row,
+      .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .cta-row {
+        margin-top: 22px;
+      }
+
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 18px;
+        border-radius: 16px;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+
+      .cta.primary {
+        background: var(--ink);
+        color: white;
+      }
+
+      .cta.secondary {
+        background: white;
+        color: var(--ink);
+        border-color: var(--line);
+      }
+
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        padding: 22px;
+      }
+
+      .stat-card {
+        padding: 20px;
+        border-radius: 22px;
+        background: white;
+        border: 1px solid var(--line);
+      }
+
+      .stat-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+
+      .stat-value {
+        margin-top: 8px;
+        font-size: 34px;
+        font-weight: 800;
+      }
+
+      .stat-note {
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.45;
+        font-size: 14px;
+      }
+
+      .sticky-nav {
+        position: sticky;
+        top: 18px;
+        z-index: 30;
+        margin-top: 22px;
+        padding: 14px;
+      }
+
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .nav-link,
+      .filter {
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: white;
+        border: 1px solid var(--line);
+        font-weight: 700;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .filter.is-active {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: white;
+      }
+
+      section {
+        margin-top: 26px;
+        padding: 28px;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 18px;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(26px, 3vw, 40px);
+      }
+
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 70ch;
+        line-height: 1.55;
+      }
+
+      .findings {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .finding {
+        padding: 18px;
+        border-radius: 22px;
+        background: white;
+        border: 1px solid var(--line);
+      }
+
+      .finding strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 18px;
+      }
+
+      .finding p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .asset-card {
+        overflow: hidden;
+        border-radius: 26px;
+        border: 1px solid var(--line);
+        background: white;
+      }
+
+      .asset-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: start;
+        padding: 20px 20px 0;
+      }
+
+      .asset-meta {
+        display: inline-flex;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        color: var(--muted);
+        background: rgba(22, 32, 48, 0.05);
+      }
+
+      .asset-card h3 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .asset-card p {
+        margin: 8px 20px 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .asset-media {
+        display: block;
+        margin: 18px 20px 0;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        background: #f8fafc;
+      }
+
+      .asset-media img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .asset-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 16px 20px 20px;
+      }
+
+      .asset-actions a,
+      .asset-actions button {
+        padding: 10px 14px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--ink);
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .asset-actions .accent {
+        background: var(--ink);
+        color: white;
+        border-color: var(--ink);
+      }
+
+      .signal-grid {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 18px;
+      }
+
+      .signal-card {
+        padding: 22px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: white;
+      }
+
+      .signal-card ul {
+        margin: 14px 0 0;
+        padding-left: 20px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .footer {
+        margin-top: 28px;
+        padding: 22px 24px;
+        color: var(--muted);
+      }
+
+      .lightbox {
+        position: fixed;
+        inset: 0;
+        display: none;
+        place-items: center;
+        background: rgba(7, 12, 24, 0.82);
+        padding: 28px;
+        z-index: 60;
+      }
+
+      .lightbox.is-open {
+        display: grid;
+      }
+
+      .lightbox img {
+        max-width: min(92vw, 1500px);
+        max-height: 88vh;
+        border-radius: 20px;
+        box-shadow: 0 26px 70px rgba(0, 0, 0, 0.35);
+      }
+
+      .lightbox button {
+        position: absolute;
+        top: 22px;
+        right: 22px;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 0;
+        background: rgba(255, 255, 255, 0.18);
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 1100px) {
+        .hero,
+        .signal-grid,
+        .gallery,
+        .findings {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .shell {
+          padding: 18px 14px 60px;
+        }
+
+        section,
+        .hero-copy,
+        .hero-stats {
+          padding: 20px;
+        }
+
+        .asset-top {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div class="panel hero-copy">
+          <div class="eyebrow">Source-derived technical atlas</div>
+          <h1>Claude Code Source Atlas</h1>
+          <p>
+            A presentation layer built from direct source analysis of the
+            repository snapshot. It packages the architecture, runtime flow,
+            hotspot profile, risk map, extension surface, and maintainer-facing
+            judgment into a single GitHub-friendly entry point.
+          </p>
+          <div class="cta-row">
+            <a class="cta primary" href="./report.html">Open Full HTML Report</a>
+            <a class="cta secondary" href="./assets/claude-code-system-architecture.png">Architecture PNG</a>
+            <a class="cta secondary" href="./assets/claude-code-how-it-works.gif">Runtime GIF</a>
+            <a class="cta secondary" href="./assets/queryengine-tool-sequence.gif">Sequence GIF</a>
+          </div>
+        </div>
+        <div class="panel hero-stats">
+          <div class="stat-card">
+            <div class="stat-label">Source Files</div>
+            <div class="stat-value">1,902</div>
+            <div class="stat-note">`src/` snapshot only. TypeScript dominates the tree.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Lines Of Code</div>
+            <div class="stat-value">513k</div>
+            <div class="stat-note">Large enough to behave like a product platform, not a narrow CLI.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Feature Flags</div>
+            <div class="stat-value">90</div>
+            <div class="stat-note">Strong variant pressure and product-surface gating.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Dynamic Imports</div>
+            <div class="stat-value">645</div>
+            <div class="stat-note">Startup discipline and runtime shape-shifting are both material concerns.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Command Surfaces</div>
+            <div class="stat-value">86</div>
+            <div class="stat-note">Breadth risk: many user-facing control surfaces beyond chat itself.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Tool Directories</div>
+            <div class="stat-value">42</div>
+            <div class="stat-note">Shared orchestration path with specialized safety layers for shells and persistence.</div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="panel sticky-nav">
+        <div class="nav-links">
+          <a class="nav-link" href="#highlights">Highlights</a>
+          <a class="nav-link" href="#gallery">Visual Gallery</a>
+          <a class="nav-link" href="#signals">Engineering Signals</a>
+          <button class="filter is-active" data-filter="all">All</button>
+          <button class="filter" data-filter="runtime">Runtime</button>
+          <button class="filter" data-filter="complexity">Complexity</button>
+          <button class="filter" data-filter="platform">Platform</button>
+          <button class="filter" data-filter="operations">Operations</button>
+        </div>
+      </nav>
+
+      <section class="panel" id="highlights">
+        <div class="section-head">
+          <div>
+            <h2>Key Findings</h2>
+            <p>
+              The strongest through-lines in the source are the long-lived
+              QueryEngine session model, a permission-heavy tool runtime, JSONL
+              transcript persistence, and a surprisingly wide extension surface
+              around MCP, hooks, skills, and remote/agent execution.
+            </p>
+          </div>
+        </div>
+        <div class="findings">
+          <article class="finding">
+            <strong>The core looks shipped; the perimeter does not</strong>
+            <p>The source reads like a mature released runtime surrounded by many gated, preview, ant-only, and build-variant features, including BUDDY companion flows and computer-use surfaces.</p>
+          </article>
+          <article class="finding">
+            <strong>`utils/` is the gravity well</strong>
+            <p>`utils/` alone is 35.2% of the total analyzed LOC. It behaves more like an internal platform layer than a helpers folder.</p>
+          </article>
+          <article class="finding">
+            <strong>Runtime complexity is centralized</strong>
+            <p>`QueryEngine`, `query.ts`, tool execution, compaction, session storage, and `main.tsx` form the main control spine of the product.</p>
+          </article>
+          <article class="finding">
+            <strong>Security thinking is real</strong>
+            <p>The shell families, permission filesystem rules, hooks, and shared tool orchestration all show deliberate defensive design.</p>
+          </article>
+          <article class="finding">
+            <strong>Variant pressure is high</strong>
+            <p>90 feature flags and 645 dynamic imports suggest strong product segmentation and performance-aware runtime shaping.</p>
+          </article>
+          <article class="finding">
+            <strong>Extension surfaces are first-class</strong>
+            <p>MCP, hooks, skills, plugins, remote sessions, worktrees, and teams are not bolt-ons. They are built into the runtime model.</p>
+          </article>
+          <article class="finding">
+            <strong>Hotspots are identifiable</strong>
+            <p>The largest files cluster around print/output, message shaping, session persistence, hook control flow, REPL behavior, and shell safety.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="gallery">
+        <div class="section-head">
+          <div>
+            <h2>Visual Gallery</h2>
+            <p>
+              Click any image to inspect it full size. The gallery mixes
+              architecture, runtime, complexity, extension, and operational
+              views so the codebase can be understood from multiple angles
+              instead of from one monolithic diagram.
+            </p>
+          </div>
+        </div>
+        <div class="gallery">
+          <article class="asset-card" data-kind="runtime platform">
+            <div class="asset-top">
+              <h3>System Architecture</h3>
+              <span class="asset-meta">Runtime / Platform</span>
+            </div>
+            <p>Layered architecture view from entry points through runtime, tools, session state, and extension surfaces.</p>
+            <a class="asset-media" href="./assets/claude-code-system-architecture.png" data-lightbox>
+              <img src="./assets/claude-code-system-architecture.png" alt="Claude Code system architecture" />
+            </a>
+            <div class="asset-actions">
+              <a class="accent" href="./assets/claude-code-system-architecture.png">Open PNG</a>
+            </div>
+          </article>
+
+          <article class="asset-card" data-kind="runtime operations">
+            <div class="asset-top">
+              <h3>Runtime Walkthrough</h3>
+              <span class="asset-meta">Runtime / User Flow</span>
+            </div>
+            <p>High-level animated walkthrough of how a prompt enters the runtime and becomes persisted session state.</p>
+            <a class="asset-media" href="./assets/claude-code-how-it-works.gif" data-lightbox>
+              <img src="./assets/claude-code-how-it-works.gif" alt="Claude Code runtime walkthrough" />
+            </a>
+            <div class="asset-actions">
+              <a class="accent" href="./assets/claude-code-how-it-works.gif">Open GIF</a>
+            </div>
+          </article>
+
+          <article class="asset-card" data-kind="runtime operations">
+            <div class="asset-top">
+              <h3>QueryEngine / Tool Sequence</h3>
+              <span class="asset-meta">Runtime / Internal Flow</span>
+            </div>
+            <p>Focused internal sequence showing how normalization, QueryEngine, model streaming, tool orchestration, and persistence chain together.</p>
+            <a class="asset-media" href="./assets/queryengine-tool-sequence.gif" data-lightbox>
+              <img src="./assets/queryengine-tool-sequence.gif" alt="QueryEngine and tool execution sequence" />
+            </a>
+            <div class="asset-actions">
+              <a class="accent" href="./assets/queryengine-tool-sequence.gif">Open GIF</a>
+              <a href="./assets/queryengine-tool-sequence.png">Static Frame</a>
+            </div>
+          </article>
+
+          <article class="asset-card" data-kind="complexity">
+            <div class="asset-top">
+              <h3>Hotspots Treemap</h3>
+              <span class="asset-meta">Complexity / Structure</span>
+            </div>
+            <p>Directory footprint plus oversized-file concentration, making the complexity center of gravity obvious at a glance.</p>
+            <a class="asset-media" href="./assets/codebase-hotspots-treemap.png" data-lightbox>
+              <img src="./assets/codebase-hotspots-treemap.png" alt="Codebase hotspots treemap" />
+            </a>
+            <div class="asset-actions">
+              <a class="accent" href="./assets/codebase-hotspots-treemap.png">Open PNG</a>
+            </div>
+          </article>
+
+          <article class="asset-card" data-kind="complexity operations">
+            <div class="asset-top">
+              <h3>Risk Heatmap</h3>
+              <span class="asset-meta">Complexity / Engineering Judgment</span>
+            </div>
+            <p>Composite risk score by major directory using LOC, breadth, fan-out, and largest-file concentration.</p>
+            <a class="asset-media" href="./assets/codebase-risk-heatmap.png" data-lightbox>
+              <img src="./assets/codebase-risk-heatmap.png" alt="Codebase risk heatmap" />
+            </a>
+            <div class="asset-actions">
+              <a class="accent" href="./assets/codebase-risk-heatmap.png">Open PNG</a>
+            </div>
+          </article>
+
+          <article class="asset-card" data-kind="platform operations">
+            <div class="asset-top">
+              <h3>Tool Permission Matrix</h3>
+              <span class="asset-meta">Platform / Safety</span>
+            </div>
+            <p>Matrix view of shared validation, permission gating, hook-awareness, policy, and side-effect characteristics across tool families.</p>
+            <a class="asset-media" href="./assets/tool-permission-matrix.png" data-lightbox>
+              <img src="./assets/tool-permission-matrix.png" alt="Tool permission matrix" />
+            </a>
+            <div class="asset-actions">
+              <a class="accent" href="./assets/tool-permission-matrix.png">Open PNG</a>
+            </div>
+          </article>
+
+          <article class="asset-card" data-kind="operations runtime">
+            <div class="asset-top">
+              <h3>Session Lifecycle</h3>
+              <span class="asset-meta">Operations / Persistence</span>
+            </div>
+            <p>Explicit session-state view covering transcript persistence, compaction, resume, task state, and memory re-entry.</p>
+            <a class="asset-media" href="./assets/session-lifecycle.png" data-lightbox>
+              <img src="./assets/session-lifecycle.png" alt="Session lifecycle diagram" />
+            </a>
+            <div class="asset-actions">
+              <a class="accent" href="./assets/session-lifecycle.png">Open PNG</a>
+            </div>
+          </article>
+
+          <article class="asset-card" data-kind="platform">
+            <div class="asset-top">
+              <h3>Extension Ecosystem</h3>
+              <span class="asset-meta">Platform / Ecosystem</span>
+            </div>
+            <p>MCP, hooks, skills, plugins, remote sessions, and wider tooling are shown as a coherent platform surface around the runtime core.</p>
+            <a class="asset-media" href="./assets/extension-ecosystem.png" data-lightbox>
+              <img src="./assets/extension-ecosystem.png" alt="Extension ecosystem diagram" />
+            </a>
+            <div class="asset-actions">
+              <a class="accent" href="./assets/extension-ecosystem.png">Open PNG</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="signals">
+        <div class="section-head">
+          <div>
+            <h2>Engineering Signals</h2>
+            <p>
+              The repository reads like mature product software that has already
+              accumulated real operational concerns: performance-sensitive
+              startup branching, variant management, transcript safety,
+              compaction recovery, and extension compatibility.
+            </p>
+          </div>
+        </div>
+        <div class="signal-grid">
+          <article class="signal-card">
+            <h3>What looks strongest</h3>
+            <ul>
+              <li>The end-to-end runtime narrative is coherent: entrypoint, QueryEngine, tool runtime, persistence.</li>
+              <li>Permission, hook, and shell safety design are deep rather than superficial.</li>
+              <li>Session persistence and compaction are treated as first-class operating constraints.</li>
+              <li>MCP and skill integration appear genuinely productized, not experimental side paths.</li>
+            </ul>
+          </article>
+          <article class="signal-card">
+            <h3>What looks risky</h3>
+            <ul>
+              <li>`utils/` is too powerful and too central to remain an undifferentiated bucket forever.</li>
+              <li>Large hotspot files raise change-risk around session state, message shaping, and hooks.</li>
+              <li>Feature flags and dynamic imports create cognitive load even when they help performance and product gating.</li>
+              <li>Commands, tools, hooks, plugins, and remote flows increase surface-area risk faster than line count alone suggests.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel footer">
+        Build set: architecture PNG, runtime GIF, internal sequence GIF, treemap, risk heatmap, tool permission matrix, session lifecycle, extension ecosystem, metrics JSON, and HTML landing page. Intended for GitHub presentation and maintainer onboarding.
+      </section>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+      <button type="button" aria-label="Close">×</button>
+      <img alt="" />
+    </div>
+
+    <script>
+      const buttons = document.querySelectorAll("[data-filter]");
+      const cards = document.querySelectorAll(".asset-card");
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImage = lightbox.querySelector("img");
+      const closeButton = lightbox.querySelector("button");
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const filter = button.dataset.filter;
+          buttons.forEach((item) => item.classList.toggle("is-active", item === button));
+          cards.forEach((card) => {
+            const kinds = card.dataset.kind || "";
+            const visible = filter === "all" || kinds.includes(filter);
+            card.style.display = visible ? "" : "none";
+          });
+        });
+      });
+
+      document.querySelectorAll("[data-lightbox]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          const image = link.querySelector("img");
+          lightboxImage.src = link.getAttribute("href");
+          lightboxImage.alt = image ? image.alt : "";
+          lightbox.classList.add("is-open");
+        });
+      });
+
+      function closeLightbox() {
+        lightbox.classList.remove("is-open");
+        lightboxImage.src = "";
+      }
+
+      closeButton.addEventListener("click", closeLightbox);
+      lightbox.addEventListener("click", (event) => {
+        if (event.target === lightbox) closeLightbox();
+      });
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeLightbox();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+.DS_Store
+.venv-assets/
+__pycache__/
+*.pyc
+*.pyo
+*.swp
