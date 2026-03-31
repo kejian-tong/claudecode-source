@@ -266,6 +266,7 @@ Included:
 - `src/`
 - `docs/`
 - `README.md`
+- `ANALYSIS_REPORT.md`
 - `CODEBASE_ANALYSIS_REPORT.html`
 - `USER_GUIDE.md`
 - `MAINTAINER_GUIDE.md`
