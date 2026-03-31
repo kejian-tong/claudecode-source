@@ -4,27 +4,16 @@ This repository packages a deep source-level analysis of the Claude Code snapsho
 
 ## Start Here
 
-- Interactive HTML landing page: [kejian-tong.github.io/claudecode-source](https://kejian-tong.github.io/claudecode-source/)
-- Full Markdown analysis report: [`ANALYSIS_REPORT.md`](ANALYSIS_REPORT.md)
-- Full HTML analysis report: [kejian-tong.github.io/claudecode-source/report.html](https://kejian-tong.github.io/claudecode-source/report.html)
-- Source HTML files: [`docs/report.html`](docs/report.html), [`CODEBASE_ANALYSIS_REPORT.html`](CODEBASE_ANALYSIS_REPORT.html)
-- User-facing guide: [`USER_GUIDE.md`](USER_GUIDE.md)
-- Engineering guide: [`MAINTAINER_GUIDE.md`](MAINTAINER_GUIDE.md)
-- Visual assets: [`docs/assets/`](docs/assets/)
+- [Open interactive landing page](https://kejian-tong.github.io/claudecode-source/)
+- [Open full HTML analysis report](https://kejian-tong.github.io/claudecode-source/report.html)
+- [Read full Markdown analysis report](ANALYSIS_REPORT.md)
+- [Read user-facing guide](USER_GUIDE.md)
+- [Read engineering guide](MAINTAINER_GUIDE.md)
+- [Browse visual assets](docs/assets/)
 
 ## How To Access The HTML Properly
 
-GitHub's normal file browser shows `.html` files as source, not as rendered pages.
-
-The cleanest way to view the HTML reports is to enable GitHub Pages for this repository:
-
-1. Open `Settings` -> `Pages`
-2. Under `Build and deployment`, choose `Deploy from a branch`
-3. Select branch `main`
-4. Select folder `/docs`
-5. Save
-
-After GitHub Pages is enabled, the rendered pages will be:
+GitHub's normal file browser shows `.html` files as source, not as rendered pages. The live HTML pages for this repository are:
 
 - `https://kejian-tong.github.io/claudecode-source/`
 - `https://kejian-tong.github.io/claudecode-source/report.html`
