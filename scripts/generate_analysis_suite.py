@@ -394,6 +394,47 @@ def draw_kicker(draw: ImageDraw.ImageDraw, xy: tuple[int, int], text: str, accen
     base.draw_text(draw, (xy[0] + padding_x, xy[1] + padding_y - 1), text, use_font, accent)
 
 
+def draw_header_stats(
+    image: Image.Image,
+    stats: list[tuple[str, str, str]],
+    *,
+    top: int = 24,
+    right: int = 1944,
+    gap: int = 14,
+) -> None:
+    draw = ImageDraw.Draw(image)
+    cursor = right
+    for value, label, accent_key in reversed(stats):
+        accent = base.PALETTE[accent_key]
+        fill = accent_fill(accent_key)
+        value_font = base.font(18, "headline")
+        label_font = base.font(13, "headline")
+        value_w, value_h = base.text_size(draw, value, value_font)
+        label_w, label_h = base.text_size(draw, label, label_font)
+        width = max(132, value_w + 46, label_w + 46)
+        rect = (cursor - width, top, cursor, top + 54)
+        base.rounded_box(image, rect, fill=fill, outline=base.with_alpha(accent, 54), width=1, radius=18)
+        draw.rounded_rectangle((rect[2] - 24, rect[1] + 16, rect[2] - 14, rect[1] + 26), radius=5, fill=accent)
+        base.draw_text(draw, (rect[0] + 16, rect[1] + 9), value, value_font, accent)
+        base.draw_text(draw, (rect[0] + 16, rect[1] + 31), label, label_font, base.PALETTE["muted"])
+        cursor -= width + gap
+
+
+def draw_footer_strip(
+    image: Image.Image,
+    text: str,
+    *,
+    rect: tuple[int, int, int, int],
+    accent_key: str = "blue",
+) -> None:
+    accent = base.PALETTE[accent_key]
+    draw = ImageDraw.Draw(image)
+    base.rounded_box(image, rect, fill=base.PALETTE["paper"], outline=base.PALETTE["line"], width=1, radius=20)
+    draw.rounded_rectangle((rect[0] + 16, rect[1] + 16, rect[0] + 24, rect[3] - 16), radius=4, fill=base.with_alpha(accent, 88))
+    font_obj, lines = base.fit_wrapped_font(draw, text, "body", 18, 15, rect[2] - rect[0] - 54, rect[3] - rect[1] - 18, 4, max_lines=3)
+    base.draw_text_lines(draw, (rect[0] + 40, rect[1] + 17), lines, font_obj, base.PALETTE["muted"], 4)
+
+
 def slice_treemap(
     items: list[DirStat],
     rect: tuple[int, int, int, int],
@@ -442,26 +483,13 @@ def render_hotspot_treemap(metrics: CodebaseMetrics) -> Path:
         "Codebase Hotspots Treemap",
         "Directory footprint and oversized-file concentration derived from the analyzed src/ tree.",
     )
-    base.draw_badge(
+    draw_header_stats(
         image,
-        (1534, 34, 1682, 72),
-        f"{metrics.total_files:,} files",
-        base.with_alpha(base.PALETTE["blue"], 22),
-        base.PALETTE["blue"],
-    )
-    base.draw_badge(
-        image,
-        (1696, 34, 1846, 72),
-        f"{metrics.total_loc:,} LOC",
-        base.with_alpha(base.PALETTE["green"], 22),
-        base.PALETTE["green"],
-    )
-    base.draw_badge(
-        image,
-        (1860, 34, 1946, 72),
-        "src/",
-        base.with_alpha(base.PALETTE["purple"], 18),
-        base.PALETTE["purple"],
+        [
+            (f"{metrics.total_files:,}", "source files", "blue"),
+            (f"{metrics.total_loc:,}", "LOC", "green"),
+            ("top 8", "directories", "purple"),
+        ],
     )
 
     treemap_rect = (56, 132, 1348, 1224)
@@ -564,11 +592,12 @@ def render_hotspot_treemap(metrics: CodebaseMetrics) -> Path:
         base.draw_text(draw, (1472, current_y + 31), f"{file_stat.loc:,} LOC · {file_stat.imports} imports", base.font(14), base.PALETTE["muted"])
         current_y += 64
 
-    footer_rect = (56, 1244, 1944, 1300)
-    base.rounded_box(image, footer_rect, fill=base.PALETTE["paper"], outline=base.PALETTE["line"], width=1, radius=20)
-    footer = "Reading: utils/, components/, services/, and tools/ dominate the footprint. The right rail highlights where size concentration turns into likely maintenance drag."
-    footer_font, footer_lines = base.fit_wrapped_font(draw, footer, "body", 18, 16, 1840, 40, 4, max_lines=2)
-    base.draw_text_lines(draw, (80, 1261), footer_lines, footer_font, base.PALETTE["muted"], 4)
+    draw_footer_strip(
+        image,
+        "Reading: utils/, components/, services/, and tools/ dominate the footprint. The right rail highlights where size concentration turns into likely maintenance drag.",
+        rect=(56, 1244, 1944, 1300),
+        accent_key="blue",
+    )
     out_path = OUT_DIR / "codebase-hotspots-treemap.png"
     image.save(out_path)
     return out_path
@@ -583,17 +612,26 @@ def render_risk_heatmap(metrics: CodebaseMetrics) -> Path:
     size = (1920, 1280)
     image = Image.new("RGBA", size, base.PALETTE["canvas_alt"])
     draw = ImageDraw.Draw(image)
+    top_dirs = metrics.top_dirs[:8]
     draw_title(
         draw,
         "Codebase Risk Heatmap",
         "Composite risk score by major directory. Higher values combine LOC, file count, import fan-out, and largest-file concentration.",
     )
-    top_dirs = metrics.top_dirs[:10]
+    draw_header_stats(
+        image,
+        [
+            (str(len(top_dirs)), "top directories", "rose"),
+            (f"{max(item.risk_score for item in top_dirs):.1f}", "peak risk", "orange"),
+            ("4-factor", "composite lens", "purple"),
+        ],
+        right=1862,
+    )
     headers = ["Directory", "LOC", "Files", "Imports", "Largest File", "Risk"]
     widths = [290, 190, 168, 188, 208, 124]
     table_x = 60
     table_y = 168
-    row_h = 94
+    row_h = 88
     table_w = sum(widths)
 
     base.rounded_box(image, (table_x - 4, table_y - 8, table_x + table_w + 4, 1156), fill=base.PALETTE["paper"], outline=base.PALETTE["line"], width=1, radius=28, shadow=True, shadow_alpha=12)
@@ -665,7 +703,12 @@ def render_risk_heatmap(metrics: CodebaseMetrics) -> Path:
         base.rounded_box(image, box, fill=base.with_alpha(accent, 14 + int(48 * ratio)), radius=14)
         base.draw_text(draw, (1392 + idx * 92, 960), label, base.font(14, "headline"), base.PALETTE["ink"])
 
-    base.draw_text(draw, (64, 1224), "Method: composite score = normalized LOC + file count + import references + largest-file size. Treat it as a prioritization lens, not a substitute for runtime tracing.", base.font(18), base.PALETTE["muted"])
+    draw_footer_strip(
+        image,
+        "Method: composite score = normalized LOC + file count + import references + largest-file size. Treat it as a prioritization lens, not a substitute for runtime tracing.",
+        rect=(56, 1214, 1862, 1268),
+        accent_key="rose",
+    )
     out_path = OUT_DIR / "codebase-risk-heatmap.png"
     image.save(out_path)
     return out_path
@@ -712,6 +755,15 @@ def render_tool_permission_matrix() -> Path:
         draw,
         "Tool Permission Matrix",
         "Shared tool orchestration path plus notable extra controls by tool family.",
+    )
+    draw_header_stats(
+        image,
+        [
+            (str(len(TOOL_MATRIX_ROWS)), "tool families", "blue"),
+            ("7", "control columns", "green"),
+            ("1", "shared runtime", "purple"),
+        ],
+        right=1864,
     )
     columns = [
         "Validation",
@@ -767,7 +819,12 @@ def render_tool_permission_matrix() -> Path:
         "Hook awareness shows up across the board because pre/post execution hooks and permission-denied hooks live in the common orchestration spine.",
     )
     base.draw_bullet_list(draw, 84, 1112, 1728, notes, base.PALETTE["blue"], "body", 16, 14)
-    base.draw_text(draw, (60, 1312), "Key sources: src/services/tools/toolExecution.ts, src/services/tools/toolOrchestration.ts, src/utils/permissions/filesystem.ts, src/tools/BashTool/*, src/tools/PowerShellTool/*.", base.font(18), base.PALETTE["muted"])
+    draw_footer_strip(
+        image,
+        "Key sources: src/services/tools/toolExecution.ts, src/services/tools/toolOrchestration.ts, src/utils/permissions/filesystem.ts, src/tools/BashTool/*, and src/tools/PowerShellTool/*.",
+        rect=(56, 1294, 1864, 1348),
+        accent_key="blue",
+    )
     out_path = OUT_DIR / "tool-permission-matrix.png"
     image.save(out_path)
     return out_path
@@ -781,6 +838,15 @@ def render_session_lifecycle() -> Path:
         draw,
         "Session Lifecycle",
         "How transcript persistence, compaction, resume, and task/agent state form the long-lived Claude Code session model.",
+    )
+    draw_header_stats(
+        image,
+        [
+            ("6", "turn phases", "blue"),
+            ("3", "persistent stores", "teal"),
+            ("resume", "session model", "purple"),
+        ],
+        right=1864,
     )
 
     steps = [
@@ -873,6 +939,15 @@ def render_extension_ecosystem(metrics: CodebaseMetrics) -> Path:
         "Extension Ecosystem",
         "How MCP, plugins, skills, hooks, and remote execution wrap around the core Claude Code runtime.",
     )
+    draw_header_stats(
+        image,
+        [
+            ("6", "extension faces", "teal"),
+            (str(metrics.feature_flags), "feature flags", "purple"),
+            ("1", "core runtime", "blue"),
+        ],
+        right=1864,
+    )
 
     draw_kicker(draw, (66, 152), "Three-zone map", "teal")
     base.draw_text(draw, (66, 204), "How the extension surface wraps around the runtime", base.font(30, "headline"), base.PALETTE["ink"])
@@ -935,11 +1010,12 @@ def render_extension_ecosystem(metrics: CodebaseMetrics) -> Path:
         font_obj, lines = base.fit_wrapped_font(draw, subtitle, "body", 17, 14, rect[2] - rect[0] - 60, 82, 4, max_lines=4)
         base.draw_text_lines(draw, (rect[0] + 42, rect[1] + 58), lines, font_obj, base.PALETTE["ink"], 4)
 
-    footer_rect = (56, 1110, 1864, 1208)
-    base.rounded_box(image, footer_rect, fill=base.PALETTE["paper"], outline=base.PALETTE["line"], width=1, radius=24)
-    footer = "Reading: this is not only a CLI. It is a runtime platform with a wide extension surface, where MCP and skills are especially prominent and built-in plugin support looks comparatively early-stage."
-    footer_font, footer_lines = base.fit_wrapped_font(draw, footer, "body", 18, 16, 1760, 60, 4, max_lines=3)
-    base.draw_text_lines(draw, (86, 1136), footer_lines, footer_font, base.PALETTE["muted"], 4)
+    draw_footer_strip(
+        image,
+        "Reading: this is not only a CLI. It is a runtime platform with a wide extension surface, where MCP and skills are especially prominent and built-in plugin support looks comparatively early-stage.",
+        rect=(56, 1110, 1864, 1208),
+        accent_key="teal",
+    )
     out_path = OUT_DIR / "extension-ecosystem.png"
     image.save(out_path)
     return out_path
