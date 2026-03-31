@@ -170,6 +170,88 @@
         padding: 14px;
       }
 
+      .launchpad {
+        margin-top: 22px;
+        padding: 24px;
+      }
+
+      .launch-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      .launch-head h2 {
+        margin: 0;
+        font-size: clamp(24px, 2.4vw, 34px);
+      }
+
+      .launch-head p {
+        margin: 0;
+        max-width: 66ch;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .launch-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .launch-card {
+        display: block;
+        padding: 18px;
+        border-radius: 22px;
+        border: 1px solid var(--line);
+        background: white;
+        box-shadow: 0 10px 30px rgba(19, 31, 54, 0.06);
+        transition:
+          transform 140ms ease,
+          box-shadow 140ms ease,
+          border-color 140ms ease;
+      }
+
+      .launch-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 34px rgba(19, 31, 54, 0.1);
+        border-color: rgba(37, 99, 235, 0.28);
+      }
+
+      .launch-kicker {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(22, 32, 48, 0.06);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .launch-title {
+        margin-top: 12px;
+        font-size: 21px;
+        font-weight: 800;
+        line-height: 1.15;
+      }
+
+      .launch-copy {
+        margin-top: 8px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .launch-meta {
+        margin-top: 14px;
+        color: var(--blue);
+        font-weight: 700;
+      }
+
       .nav-links {
         display: flex;
         flex-wrap: wrap;
@@ -388,7 +470,8 @@
         .hero,
         .signal-grid,
         .gallery,
-        .findings {
+        .findings,
+        .launch-grid {
           grid-template-columns: 1fr;
         }
       }
@@ -406,6 +489,11 @@
 
         .asset-top {
           flex-direction: column;
+        }
+
+        .launch-head {
+          flex-direction: column;
+          align-items: start;
         }
       }
     </style>
@@ -463,8 +551,60 @@
         </div>
       </header>
 
+      <section class="panel launchpad" id="start">
+        <div class="launch-head">
+          <div>
+            <h2>Open The Right Artifact</h2>
+          </div>
+          <p>
+            Use these direct entry points instead of browsing the repository tree.
+            They open the rendered report, the landing visuals, and the longer
+            engineering/user guides with cleaner paths.
+          </p>
+        </div>
+        <div class="launch-grid">
+          <a class="launch-card" href="./report.html">
+            <span class="launch-kicker">Primary Report</span>
+            <div class="launch-title">Full HTML Analysis Report</div>
+            <div class="launch-copy">The complete browser-formatted analysis with feature maturity, system shape, risks, and priorities.</div>
+            <div class="launch-meta">Open rendered report →</div>
+          </a>
+          <a class="launch-card" href="#gallery">
+            <span class="launch-kicker">Visual Atlas</span>
+            <div class="launch-title">Architecture And Runtime Visuals</div>
+            <div class="launch-copy">Jump straight to the gallery for diagrams, GIFs, treemap, risk heatmap, lifecycle, and ecosystem views.</div>
+            <div class="launch-meta">Open visual gallery →</div>
+          </a>
+          <a class="launch-card" href="https://github.com/kejian-tong/claudecode-source/blob/main/ANALYSIS_REPORT.md">
+            <span class="launch-kicker">Markdown</span>
+            <div class="launch-title">Full Markdown Report</div>
+            <div class="launch-copy">The long-form source analysis in Markdown, useful for GitHub-native reading, quoting, and scanning section by section.</div>
+            <div class="launch-meta">Open GitHub-rendered Markdown →</div>
+          </a>
+          <a class="launch-card" href="https://github.com/kejian-tong/claudecode-source/blob/main/USER_GUIDE.md">
+            <span class="launch-kicker">User Guide</span>
+            <div class="launch-title">How Claude Code Works For Users</div>
+            <div class="launch-copy">A user-facing walkthrough of the runtime, operating model, safety boundaries, and practical usage guidance.</div>
+            <div class="launch-meta">Open guide →</div>
+          </a>
+          <a class="launch-card" href="https://github.com/kejian-tong/claudecode-source/blob/main/MAINTAINER_GUIDE.md">
+            <span class="launch-kicker">Maintainers</span>
+            <div class="launch-title">Engineering Guide For Maintainers</div>
+            <div class="launch-copy">Reading order, hotspot warnings, risky modules, debugging map, and safe-change advice for future maintainers.</div>
+            <div class="launch-meta">Open maintainer guide →</div>
+          </a>
+          <a class="launch-card" href="https://github.com/kejian-tong/claudecode-source">
+            <span class="launch-kicker">Repository</span>
+            <div class="launch-title">Browse Source Snapshot</div>
+            <div class="launch-copy">Open the GitHub repository when you want the raw source tree, generated assets, and scripts behind this documentation bundle.</div>
+            <div class="launch-meta">Open repository →</div>
+          </a>
+        </div>
+      </section>
+
       <nav class="panel sticky-nav">
         <div class="nav-links">
+          <a class="nav-link" href="#start">Launch Pad</a>
           <a class="nav-link" href="#highlights">Highlights</a>
           <a class="nav-link" href="#gallery">Visual Gallery</a>
           <a class="nav-link" href="#signals">Engineering Signals</a>
