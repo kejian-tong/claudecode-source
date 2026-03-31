@@ -4,10 +4,10 @@ This repository packages a deep source-level analysis of the Claude Code snapsho
 
 ## Start Here
 
-- Interactive HTML landing page: [`docs/index.html`](docs/index.html)
+- Interactive HTML landing page: [kejian-tong.github.io/claudecode-source](https://kejian-tong.github.io/claudecode-source/)
 - Full Markdown analysis report: [`ANALYSIS_REPORT.md`](ANALYSIS_REPORT.md)
-- Full HTML analysis report: [`docs/report.html`](docs/report.html)
-- Root HTML report copy: [`CODEBASE_ANALYSIS_REPORT.html`](CODEBASE_ANALYSIS_REPORT.html)
+- Full HTML analysis report: [kejian-tong.github.io/claudecode-source/report.html](https://kejian-tong.github.io/claudecode-source/report.html)
+- Source HTML files: [`docs/report.html`](docs/report.html), [`CODEBASE_ANALYSIS_REPORT.html`](CODEBASE_ANALYSIS_REPORT.html)
 - User-facing guide: [`USER_GUIDE.md`](USER_GUIDE.md)
 - Engineering guide: [`MAINTAINER_GUIDE.md`](MAINTAINER_GUIDE.md)
 - Visual assets: [`docs/assets/`](docs/assets/)

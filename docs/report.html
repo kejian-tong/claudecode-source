@@ -38,7 +38,9 @@
         radial-gradient(circle at top right, rgba(18, 96, 103, 0.14), transparent 28%),
         linear-gradient(180deg, #f7f1e7 0%, #eee4d5 52%, #e8dcc9 100%);
       font-family: var(--sans);
-      line-height: 1.55;
+      font-size: 17px;
+      line-height: 1.68;
+      text-rendering: optimizeLegibility;
     }
 
     .page {
@@ -99,6 +101,8 @@
       padding: 30px;
       overflow: hidden;
       position: relative;
+      display: grid;
+      gap: 14px;
     }
 
     .hero::after {
@@ -122,18 +126,20 @@
     }
 
     h1 {
-      margin: 0 0 12px;
+      margin: 0;
       font-family: var(--serif);
-      font-size: clamp(2.2rem, 4vw, 4rem);
-      line-height: 0.95;
-      max-width: 10ch;
+      font-size: clamp(2.4rem, 4.1vw, 3.7rem);
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+      max-width: 12ch;
+      text-wrap: balance;
     }
 
     .hero p {
       margin: 0;
-      max-width: 70ch;
+      max-width: 76ch;
       color: var(--muted);
-      font-size: 1.02rem;
+      font-size: 1.03rem;
     }
 
     .metrics-grid {
@@ -172,29 +178,32 @@
     h2 {
       margin: 0 0 14px;
       font-family: var(--serif);
-      font-size: 2rem;
-      line-height: 1.05;
+      font-size: 2.02rem;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
     }
 
     h3 {
       margin: 26px 0 10px;
-      font-size: 1.12rem;
-      line-height: 1.2;
+      font-size: 1.13rem;
+      line-height: 1.32;
       color: var(--accent-2);
     }
 
     p {
-      margin: 0 0 14px;
+      margin: 0 0 15px;
+      max-width: 74ch;
     }
 
     ul,
     ol {
-      margin: 0 0 14px 20px;
-      padding: 0;
+      margin: 0 0 15px;
+      padding-left: 1.2rem;
     }
 
     li {
-      margin: 0 0 8px;
+      margin: 0 0 9px;
+      padding-left: 0.1rem;
     }
 
     .pill-row {
@@ -233,6 +242,13 @@
       background: rgba(255, 250, 242, 0.84);
     }
 
+    .card p,
+    .card li,
+    td {
+      font-size: 0.98rem;
+      line-height: 1.68;
+    }
+
     .card h3 {
       margin-top: 0;
       color: var(--accent);
@@ -241,7 +257,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.95rem;
+      font-size: 0.96rem;
       margin: 12px 0 16px;
       overflow: hidden;
       border-radius: 16px;
@@ -252,7 +268,7 @@
     th,
     td {
       text-align: left;
-      padding: 12px 14px;
+      padding: 14px 16px;
       border-bottom: 1px solid var(--line);
       vertical-align: top;
     }
@@ -260,7 +276,7 @@
     th {
       color: var(--accent);
       font-size: 0.82rem;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
       background: rgba(179, 74, 24, 0.06);
     }
@@ -314,6 +330,11 @@
       .metrics-grid,
       .twocol {
         grid-template-columns: 1fr;
+      }
+
+      h1 {
+        max-width: none;
+        font-size: clamp(2.1rem, 10vw, 3rem);
       }
     }
   </style>
