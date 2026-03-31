@@ -21,13 +21,6 @@ Around March 31, 2026, community and media coverage widely credited Chaofan Shou
 - [Read engineering guide](MAINTAINER_GUIDE.md)
 - [Browse visual assets](docs/assets/)
 
-## How To Access The HTML Properly
-
-GitHub's normal file browser shows `.html` files as source, not as rendered pages. The live HTML pages for this repository are:
-
-- `https://kejian-tong.github.io/claudecode-source/`
-- `https://kejian-tong.github.io/claudecode-source/report.html`
-
 ## What This Bundle Covers
 
 - A large source snapshot under `src/`
