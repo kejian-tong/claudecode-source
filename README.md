@@ -4,9 +4,11 @@ This repository packages a deep source-level analysis of the Claude Code snapsho
 
 ## Provenance Note
 
-This is an independent analysis repository, not an official Anthropic repository or official Claude Code release.
+Anthropic maintains an official public Claude Code repository at [`anthropics/claude-code`](https://github.com/anthropics/claude-code).
 
-It analyzes the Claude Code source snapshot included here under `src/`. The work in this repository is the analysis, documentation, and visualization layer built on top of that snapshot. It does not make claims about how the snapshot became public.
+This repository is not that official Anthropic repository. It is an independent analysis, documentation, and visualization bundle built around the Claude Code source snapshot committed here under `src/`.
+
+It does not claim affiliation with Anthropic, and it does not make claims about the provenance relationship between this snapshot and Anthropic's current upstream repository.
 
 ## Start Here
 
