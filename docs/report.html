@@ -83,6 +83,35 @@
       color: var(--ink);
     }
 
+    .top-links {
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(179, 74, 24, 0.2);
+      background: rgba(255, 250, 242, 0.86);
+      color: var(--accent);
+      font: 700 0.78rem/1 var(--sans);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .top-link::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
     .content {
       min-width: 0;
     }
@@ -362,6 +391,13 @@
     </aside>
 
     <main class="content">
+      <div class="top-links">
+        <a class="top-link" href="./">Back To Hub</a>
+        <a class="top-link" href="./reports.html">Report Pack</a>
+        <a class="top-link" href="./feature-atlas.html">Capability Map EN</a>
+        <a class="top-link" href="./feature-atlas-zh.html">Capability Map 中文</a>
+      </div>
+
       <div class="hero">
         <p class="eyebrow">Engineering Review</p>
         <h1>Claude Code Source Analysis</h1>
@@ -940,6 +976,10 @@
         </p>
         <p class="footer-note">
           Scope note: this report is based on the <code>src/</code> snapshot present in the repository root on March 31, 2026.
+        </p>
+        <p class="footer-note">
+          For the standalone Chinese and English Markdown/PDF artifacts added on top of this HTML report, open the
+          <a href="./reports.html">bilingual report pack</a>.
         </p>
       </section>
     </main>

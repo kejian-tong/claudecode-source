@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Claude Code Report Pack</title>
+    <style>
+      :root {
+        --bg: #f6f8fc;
+        --paper: #ffffff;
+        --paper-soft: #f4f7fc;
+        --line: #d8e2ef;
+        --ink: #172033;
+        --muted: #62748d;
+        --blue: #2563eb;
+        --blue-fill: #eef4ff;
+        --teal: #0ea5a3;
+        --teal-fill: #edfcfb;
+        --green: #10b981;
+        --green-fill: #eefaf5;
+        --orange: #f59e0b;
+        --orange-fill: #fff7ea;
+        --shadow: 0 18px 44px rgba(18, 35, 61, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
+          radial-gradient(circle at top right, rgba(14, 165, 163, 0.08), transparent 24%),
+          linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 28px 28px 72px;
+      }
+
+      .topbar,
+      .hero,
+      .artifact-grid,
+      .support-grid {
+        display: grid;
+        gap: 20px;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .top-links,
+      .hero-actions,
+      .card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .pill,
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 15px;
+        border-radius: 999px;
+        border: 1px solid rgba(37, 99, 235, 0.22);
+        background: var(--blue-fill);
+        color: var(--blue);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .button {
+        border-radius: 16px;
+        text-transform: none;
+        letter-spacing: 0;
+        font-size: 14px;
+      }
+
+      .button.primary {
+        background: linear-gradient(135deg, var(--ink), #24324d);
+        border-color: #24324d;
+        color: white;
+      }
+
+      .button.teal {
+        background: var(--teal-fill);
+        border-color: rgba(14, 165, 163, 0.24);
+        color: var(--teal);
+      }
+
+      .button.ghost {
+        background: var(--paper);
+        border-color: var(--line);
+        color: var(--ink);
+      }
+
+      .panel {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+      }
+
+      .hero {
+        grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+        align-items: stretch;
+      }
+
+      .hero-copy,
+      .hero-side,
+      .artifact-card,
+      .support-card {
+        padding: 30px;
+      }
+
+      .hero-copy {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-copy::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 8px;
+        background: linear-gradient(180deg, var(--blue), var(--teal));
+      }
+
+      .hero-copy::after {
+        content: "";
+        position: absolute;
+        right: -120px;
+        top: -120px;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.12), transparent 62%);
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(37, 99, 235, 0.22);
+        background: var(--blue-fill);
+        color: var(--blue);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before,
+      .pill::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        margin-top: 18px;
+        font-size: clamp(36px, 4.2vw, 56px);
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+      }
+
+      h2 {
+        font-size: 28px;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+
+      h3 {
+        font-size: 22px;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+      }
+
+      .hero-copy p,
+      .hero-side p,
+      .artifact-card p,
+      .support-card p {
+        color: var(--muted);
+        line-height: 1.62;
+      }
+
+      .hero-copy p {
+        margin-top: 14px;
+        max-width: 64ch;
+        font-size: 17px;
+      }
+
+      .hero-actions {
+        margin-top: 22px;
+      }
+
+      .hero-side {
+        display: grid;
+        gap: 14px;
+      }
+
+      .signal {
+        border-radius: 22px;
+        border: 1px solid var(--line);
+        background: var(--paper-soft);
+        padding: 18px 18px 16px;
+      }
+
+      .signal strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--teal);
+      }
+
+      .artifact-grid {
+        margin-top: 24px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .artifact-card,
+      .support-card {
+        display: grid;
+        gap: 14px;
+      }
+
+      .artifact-card.cn {
+        background: linear-gradient(180deg, rgba(37, 99, 235, 0.05), rgba(37, 99, 235, 0.02));
+      }
+
+      .artifact-card.en {
+        background: linear-gradient(180deg, rgba(14, 165, 163, 0.06), rgba(14, 165, 163, 0.02));
+      }
+
+      .kicker {
+        display: inline-flex;
+        width: fit-content;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .artifact-card.cn .kicker {
+        background: var(--blue-fill);
+        color: var(--blue);
+      }
+
+      .artifact-card.en .kicker {
+        background: var(--teal-fill);
+        color: var(--teal);
+      }
+
+      .meta-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .meta-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.84);
+      }
+
+      .meta-row span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .meta-row strong {
+        font-size: 14px;
+      }
+
+      .support-grid {
+        margin-top: 24px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .support-card {
+        background: var(--paper);
+      }
+
+      .support-card.orange {
+        background: linear-gradient(180deg, rgba(245, 158, 11, 0.06), rgba(245, 158, 11, 0.02));
+      }
+
+      .support-card.green {
+        background: linear-gradient(180deg, rgba(16, 185, 129, 0.06), rgba(16, 185, 129, 0.02));
+      }
+
+      code {
+        font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+        font-size: 0.95em;
+      }
+
+      @media (max-width: 980px) {
+        .topbar,
+        .hero,
+        .artifact-grid,
+        .support-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .shell {
+          padding: 18px 14px 56px;
+        }
+
+        .hero-copy,
+        .hero-side,
+        .artifact-card,
+        .support-card {
+          padding: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="topbar">
+        <div class="top-links">
+          <a class="pill" href="./">Back To Hub</a>
+          <a class="pill" href="./report.html">HTML Report</a>
+          <a class="pill" href="./feature-atlas.html">Capability Map EN</a>
+          <a class="pill" href="./feature-atlas-zh.html">Capability Map 中文</a>
+        </div>
+      </div>
+
+      <header class="hero">
+        <div class="panel hero-copy">
+          <div class="eyebrow">Independent bilingual report pack</div>
+          <h1>Markdown + PDF Entry Point</h1>
+          <p>
+            This page collects the standalone Chinese and English source-analysis
+            reports added on top of the existing HTML documentation bundle. Use
+            it when you want the long-form report artifacts directly instead of
+            navigating through the repository tree.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="https://github.com/kejian-tong/claudecode-source/blob/main/reports/claude-code-source-analysis.zh.md">Read Chinese Markdown</a>
+            <a class="button teal" href="https://raw.githubusercontent.com/kejian-tong/claudecode-source/main/reports/claude-code-source-analysis.zh.pdf">Download Chinese PDF</a>
+            <a class="button primary" href="https://github.com/kejian-tong/claudecode-source/blob/main/reports/claude-code-source-analysis.en.md">Read English Markdown</a>
+            <a class="button teal" href="https://raw.githubusercontent.com/kejian-tong/claudecode-source/main/reports/claude-code-source-analysis.en.pdf">Download English PDF</a>
+          </div>
+        </div>
+        <div class="panel hero-side">
+          <div class="signal">
+            <strong>Why this page exists</strong>
+            <p>
+              The site already had a browser-formatted HTML report and compact
+              capability maps. The new report pack adds a separate source-driven
+              bilingual narrative in Markdown and PDF.
+            </p>
+          </div>
+          <div class="signal">
+            <strong>Evidence boundary</strong>
+            <p>
+              Both reports were written from direct inspection of the committed
+              source tree. The user-supplied PDFs were treated as outside
+              reference, not as source evidence.
+            </p>
+          </div>
+          <div class="signal">
+            <strong>Regeneration path</strong>
+            <p>
+              The PDFs are produced from the Markdown sources by
+              <code>scripts/render_markdown_pdf.py</code>, so future edits can
+              keep the artifact chain reproducible.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <section class="artifact-grid">
+        <article class="panel artifact-card cn">
+          <span class="kicker">Chinese report</span>
+          <h2>独立中文深度分析报告</h2>
+          <p>
+            面向中文阅读场景的长报告版本，覆盖启动链路、QueryEngine、
+            工具调度、权限与沙箱、会话存储、MCP/插件/技能、多代理与远程
+            执行等主干判断。
+          </p>
+          <div class="meta-list">
+            <div class="meta-row">
+              <span>Formats</span>
+              <strong>Markdown + PDF</strong>
+            </div>
+            <div class="meta-row">
+              <span>PDF pages</span>
+              <strong>12 pages</strong>
+            </div>
+            <div class="meta-row">
+              <span>Repository path</span>
+              <strong><code>reports/claude-code-source-analysis.zh.*</code></strong>
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="button primary" href="https://github.com/kejian-tong/claudecode-source/blob/main/reports/claude-code-source-analysis.zh.md">Open Markdown On GitHub</a>
+            <a class="button teal" href="https://raw.githubusercontent.com/kejian-tong/claudecode-source/main/reports/claude-code-source-analysis.zh.pdf">Download PDF</a>
+            <a class="button ghost" href="https://raw.githubusercontent.com/kejian-tong/claudecode-source/main/reports/claude-code-source-analysis.zh.md">Open Raw Markdown</a>
+          </div>
+        </article>
+
+        <article class="panel artifact-card en">
+          <span class="kicker">English report</span>
+          <h2>Independent English Deep-Dive</h2>
+          <p>
+            The English standalone version focuses on runtime topology,
+            execution semantics, tool orchestration, safety layers, transcript
+            persistence, cache engineering, extensibility, and platform risk.
+          </p>
+          <div class="meta-list">
+            <div class="meta-row">
+              <span>Formats</span>
+              <strong>Markdown + PDF</strong>
+            </div>
+            <div class="meta-row">
+              <span>PDF pages</span>
+              <strong>13 pages</strong>
+            </div>
+            <div class="meta-row">
+              <span>Repository path</span>
+              <strong><code>reports/claude-code-source-analysis.en.*</code></strong>
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="button primary" href="https://github.com/kejian-tong/claudecode-source/blob/main/reports/claude-code-source-analysis.en.md">Open Markdown On GitHub</a>
+            <a class="button teal" href="https://raw.githubusercontent.com/kejian-tong/claudecode-source/main/reports/claude-code-source-analysis.en.pdf">Download PDF</a>
+            <a class="button ghost" href="https://raw.githubusercontent.com/kejian-tong/claudecode-source/main/reports/claude-code-source-analysis.en.md">Open Raw Markdown</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="support-grid">
+        <article class="panel support-card orange">
+          <h3>How this fits with the rest of the site</h3>
+          <p>
+            The HTML report remains the best browser-native reading path. The
+            capability maps remain the fastest compact overview. This report hub
+            is the artifact-centric path for Markdown and downloadable PDF.
+          </p>
+          <div class="card-actions">
+            <a class="button ghost" href="./report.html">Open HTML report</a>
+            <a class="button ghost" href="./feature-atlas.html">Open capability map EN</a>
+            <a class="button ghost" href="./feature-atlas-zh.html">Open capability map 中文</a>
+          </div>
+        </article>
+
+        <article class="panel support-card green">
+          <h3>Source and generation paths</h3>
+          <p>
+            Repository sources live under <code>reports/</code>. The PDF export
+            helper lives at <code>scripts/render_markdown_pdf.py</code>. If the
+            reports are updated later, this page should keep pointing at the
+            repository canonical paths rather than duplicated copies.
+          </p>
+          <div class="card-actions">
+            <a class="button ghost" href="https://github.com/kejian-tong/claudecode-source/tree/main/reports">Open reports directory</a>
+            <a class="button ghost" href="https://github.com/kejian-tong/claudecode-source/blob/main/scripts/render_markdown_pdf.py">Open export script</a>
+            <a class="button ghost" href="https://github.com/kejian-tong/claudecode-source">Open repository</a>
+          </div>
+        </article>
+      </section>
+    </div>
+  </body>
+</html>

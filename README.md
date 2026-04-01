@@ -34,6 +34,7 @@ Around March 31, 2026, community reporting widely credited Chaofan Shou ([@Fried
 ## Start Here
 
 - [Open interactive landing page](https://kejian-tong.github.io/claudecode-source/)
+- [Open bilingual report pack](https://kejian-tong.github.io/claudecode-source/reports.html)
 - [Open source capability map (English)](https://kejian-tong.github.io/claudecode-source/feature-atlas.html)
 - [Open source capability map (中文)](https://kejian-tong.github.io/claudecode-source/feature-atlas-zh.html)
 - [Open full HTML analysis report](https://kejian-tong.github.io/claudecode-source/report.html)
