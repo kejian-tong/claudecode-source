@@ -1,16 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Claude Code Hidden Feature Atlas</title>
+    <title>Claude Code 隐藏功能图谱</title>
     <style>
       :root {
         --paper: #ffffff;
         --paper-soft: #f4f7fc;
         --line: #d8e2ef;
         --ink: #172033;
-        --muted: #62748d;
+        --muted: #61748e;
         --blue: #2563eb;
         --blue-fill: #eef4ff;
         --green: #10b981;
@@ -32,7 +32,15 @@
 
       body {
         margin: 0;
-        font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-family:
+          "PingFang SC",
+          "Hiragino Sans GB",
+          "Noto Sans SC",
+          "Source Han Sans SC",
+          "Microsoft YaHei",
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
         color: var(--ink);
         background:
           radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
@@ -77,8 +85,7 @@
         border-radius: 999px;
         font-size: 13px;
         font-weight: 800;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
+        letter-spacing: 0.04em;
       }
 
       .pill-link,
@@ -156,7 +163,7 @@
 
       .hero {
         display: grid;
-        grid-template-columns: minmax(0, 1.28fr) minmax(360px, 0.72fr);
+        grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.75fr);
         gap: 22px;
       }
 
@@ -193,18 +200,17 @@
       }
 
       h1 {
-        margin-top: 20px;
+        margin-top: 18px;
         font-size: clamp(34px, 4vw, 54px);
-        line-height: 0.96;
-        letter-spacing: -0.04em;
-        white-space: nowrap;
+        line-height: 1.02;
+        letter-spacing: -0.03em;
       }
 
-      .hero-sub {
+      .en-subtitle {
         margin-top: 14px;
         font-size: 14px;
         font-weight: 800;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
         color: var(--teal);
       }
@@ -214,13 +220,21 @@
       .card p,
       .count-card p {
         color: var(--muted);
-        line-height: 1.6;
+        line-height: 1.72;
       }
 
       .hero-main p {
-        max-width: 66ch;
+        max-width: 62ch;
         margin: 18px 0 0;
         font-size: 18px;
+      }
+
+      .en-note {
+        display: block;
+        margin-top: 8px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--muted);
       }
 
       .hero-side {
@@ -273,7 +287,7 @@
         max-width: 72ch;
         margin: 0;
         color: var(--muted);
-        line-height: 1.55;
+        line-height: 1.65;
       }
 
       .count-grid {
@@ -298,7 +312,6 @@
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.05em;
-        text-transform: uppercase;
         color: var(--muted);
       }
 
@@ -346,9 +359,19 @@
       }
 
       .card h3 {
-        font-size: 23px;
-        line-height: 1.08;
+        font-size: 22px;
+        line-height: 1.14;
         margin-bottom: 8px;
+      }
+
+      .dual {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
       }
 
       .card code,
@@ -368,13 +391,7 @@
         background: rgba(255, 255, 255, 0.74);
         color: var(--muted);
         font-size: 14px;
-        line-height: 1.55;
-      }
-
-      @media (max-width: 1220px) {
-        h1 {
-          white-space: normal;
-        }
+        line-height: 1.65;
       }
 
       @media (max-width: 1100px) {
@@ -397,60 +414,64 @@
     <div class="shell">
       <div class="topbar">
         <div class="top-left">
-          <a class="pill-link" href="./">Back To Analysis Hub</a>
-          <a class="pill-link" href="./feature-atlas-zh.html">Chinese / 中文版</a>
+          <a class="pill-link" href="./">返回首页 / Back To Hub</a>
+          <a class="pill-link" href="./feature-atlas.html">English Atlas</a>
         </div>
         <div class="top-metrics">
           <div class="metric blue">
             <strong>1,902</strong>
-            <span>source files</span>
+            <span>源码文件 / source files</span>
           </div>
           <div class="metric green">
             <strong>513,237</strong>
-            <span>LOC analyzed</span>
+            <span>代码行数 / LOC analyzed</span>
           </div>
           <div class="metric purple">
             <strong>89</strong>
-            <span>feature symbols</span>
+            <span>feature 符号 / feature symbols</span>
           </div>
         </div>
       </div>
 
       <header class="hero">
         <div class="panel hero-main">
-          <div class="kicker">Source-backed compact verdict</div>
-          <h1>Claude Code Hidden Feature Atlas</h1>
-          <div class="hero-sub">Gated, preview, and partially inspectable surfaces in one page</div>
+          <div class="kicker">源码证据版 / source-backed compact view</div>
+          <h1>Claude Code 隐藏功能图谱</h1>
+          <div class="en-subtitle">Hidden / Gated Feature Atlas</div>
           <p>
-            This is the stricter answer to the "hidden Claude Code features"
-            discussion. It separates what is clearly implemented in the source
-            tree from what is only gated, partially inspectable, or overstated
-            by poster-style summaries.
+            这是一页更严格的“隐藏功能”总结：把源码里明确实现的功能、受
+            gate 控制的能力、以及目前证据还不够直接的说法分开写，避免把
+            “实现存在”直接写成“已经全面公开发布”。
+            <span class="en-note">
+              A stricter one-page reading of the hidden-feature discussion:
+              implemented surfaces, gated capabilities, and over-read claims are
+              deliberately separated.
+            </span>
           </p>
         </div>
         <div class="panel hero-side">
           <div class="summary-card good">
-            <h3>What the viral summary gets right</h3>
+            <h3>这张海报大方向是对的</h3>
+            <span class="dual">What the viral summary gets right</span>
             <p>
-              Buddy, KAIROS, Auto-Dream, Ultraplan, Ultrareview, Voice,
-              Teleport, Chrome, Terminal Panel, Team Memory, and swarm-style
-              coordination are all real feature families in this snapshot.
+              Buddy、KAIROS、Auto-Dream、Ultraplan、Ultrareview、Voice、
+              Teleport、Chrome、Terminal Panel、Team Memory、Swarm 这些方向都不是空穴来风。
             </p>
           </div>
           <div class="summary-card caution">
-            <h3>What it gets too confident about</h3>
+            <h3>但有几处写法过头了</h3>
+            <span class="dual">What still needs caveats</span>
             <p>
-              "Daemon" and "self-hosted runner" need caveats, and counts like
-              <code>500+ runtime gates</code> are only valid if the counting
-              method is disclosed.
+              “Daemon”“Self-hosted runner” 需要保留意见，像
+              <code>500+ runtime gates</code> 这种数字也必须先说明统计口径。
             </p>
           </div>
           <div class="summary-card note">
-            <h3>Safest one-line judgment</h3>
+            <h3>最稳的一句话结论</h3>
+            <span class="dual">Safest one-line judgment</span>
             <p>
-              This source tree looks like a shipped core runtime surrounded by a
-              large ring of gated, preview, enterprise, and build-variant
-              capabilities.
+              这份源码更像一个已经成熟上线的核心运行时，外面包着一大圈受 gate、
+              preview、enterprise 和 build-variant 控制的功能层。
             </p>
           </div>
         </div>
@@ -459,34 +480,46 @@
       <section class="panel section">
         <div class="section-head">
           <div>
-            <h2>Count Hygiene</h2>
+            <h2>数字口径</h2>
+            <div class="dual">Count Hygiene</div>
           </div>
           <p>
-            These are the safest compact numbers to lead with. They come from
-            exact repo-level counting rules rather than poster-style round
-            numbers.
+            这些数字适合放在首页或摘要里，因为它们的统计方式比较稳定，不像“500+
+            runtime gates”那样高度依赖口径。
           </p>
         </div>
         <div class="count-grid">
           <div class="count-card">
             <strong>89</strong>
-            <span>unique all-caps <code>feature('FLAG')</code> symbols</span>
-            <p>Good headline metric for variant pressure.</p>
+            <span>唯一的 all-caps <code>feature('FLAG')</code> 符号</span>
+            <p>
+              适合表达“变体压力很大”。
+              <span class="en-note">Stable headline metric for variant pressure.</span>
+            </p>
           </div>
           <div class="count-card">
             <strong>941</strong>
-            <span><code>feature('...')</code> call sites</span>
-            <p>Much closer to what people mean when they say the tree is heavily gated.</p>
+            <span><code>feature('...')</code> 调用点</span>
+            <p>
+              更接近大家口中“这个仓库到处都是 gate”时真正想表达的量级。
+              <span class="en-note">Closer to the intuitive "heavily gated" reading.</span>
+            </p>
           </div>
           <div class="count-card">
             <strong>86</strong>
-            <span>command surfaces</span>
-            <p>Broader than slash commands, but a much more stable repo-level count.</p>
+            <span>命令面 / command surfaces</span>
+            <p>
+              比单纯数 slash commands 更稳。
+              <span class="en-note">Broader and more reliable than counting slash commands only.</span>
+            </p>
           </div>
           <div class="count-card">
             <strong>42</strong>
-            <span>tool directories</span>
-            <p>Useful for breadth, but not the same thing as "agent tools".</p>
+            <span>工具目录 / tool directories</span>
+            <p>
+              能反映广度，但不等于“47+ agent tools”这种海报口径。
+              <span class="en-note">Useful breadth signal, not the same as "agent tool" counts.</span>
+            </p>
           </div>
         </div>
       </section>
@@ -494,118 +527,112 @@
       <section class="panel section">
         <div class="section-head">
           <div>
-            <h2>Strongly Supported Feature Families</h2>
+            <h2>证据最强的功能面</h2>
+            <div class="dual">Strongly Supported Feature Families</div>
           </div>
           <p>
-            These are the poster claims that are clearly backed by real source
-            implementation, even when some of them are still gated.
+            这部分是“海报里写出来基本站得住”的内容。即使它们有些仍然受 gate
+            控制，也确实不是几条字符串或半成品 stub。
           </p>
         </div>
         <div class="grid features-grid">
           <article class="card">
-            <div class="status gated">Real + gated</div>
-            <h3>Buddy / Companion</h3>
+            <div class="status gated">实装但受 gate 控制 / Real + gated</div>
+            <h3>Buddy / 伴生宠物</h3>
             <p>
-              <code>src/buddy/</code> is substantial: 18 species, 5 rarities,
-              pet reactions, prompt triggers, REPL rendering, and persisted
-              companion state. This is not a stray joke string.
+              <code>src/buddy/</code> 是完整功能区：18 种 species、5 档 rarity、
+              <code>/buddy</code> 触发、REPL 精灵、配置持久化都在。
+              <span class="en-note">A real companion system, not a stray internal joke.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status gated">Real + gated</div>
-            <h3>KAIROS Family</h3>
+            <div class="status gated">实装但受 gate 控制 / Real + gated</div>
+            <h3>KAIROS 家族</h3>
             <p>
-              Assistant mode, Brief, Proactive, and Channels span
-              <code>src/main.tsx</code>, tools, services, and UI. The family is
-              large and real, but variant-driven rather than baseline.
+              Assistant mode、Brief、Proactive、Channels 跨
+              <code>main.tsx</code>、tools、services、UI 多层出现，是真实的大功能族。
+              <span class="en-note">Large cross-cutting family, but variant-driven rather than always-on.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status strong">Strong evidence</div>
-            <h3>Auto-Dream</h3>
+            <div class="status strong">强证据 / Strong evidence</div>
+            <h3>Auto-Dream 记忆整理</h3>
             <p>
-              <code>src/services/autoDream/autoDream.ts</code> implements
-              background memory consolidation with lock handling, scheduler
-              checks, a forked task path, and completion logic.
+              有独立的后台调度、锁、fork 任务路径和完成回写逻辑。
+              <span class="en-note">Background memory consolidation is explicitly implemented.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status gated">Real + gated</div>
-            <h3>UDS Inbox</h3>
+            <div class="status gated">实装但受 gate 控制 / Real + gated</div>
+            <h3>UDS Inbox 跨会话通信</h3>
             <p>
-              Cross-session / peer messaging is source-backed through
-              <code>feature('UDS_INBOX')</code>, messaging socket setup, and
-              peer-facing tools such as <code>ListPeersTool</code>.
+              消息 socket、peer surface、会话并发识别都存在，源码证据很直接。
+              <span class="en-note">Cross-session / peer messaging is real, not speculative.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status strong">Strong evidence</div>
+            <div class="status strong">强证据 / Strong evidence</div>
             <h3>Teleport / Remote Sessions</h3>
             <p>
-              <code>teleportToRemote</code>, <code>--teleport</code>, CCR
-              session creation, session ingress, resume, and branch recovery are
-              all deeply implemented.
+              远端会话创建、resume、ingress、branch 恢复整条链路都很深。
+              <span class="en-note">Remote session creation and recovery are deeply implemented.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status gated">Real + gated</div>
-            <h3>Ultraplan</h3>
+            <div class="status gated">实装但受 gate 控制 / Real + gated</div>
+            <h3>Ultraplan 云端规划</h3>
             <p>
-              <code>feature('ULTRAPLAN')</code>, keyword routing, remote launch,
-              CCR polling, and "teleport back to terminal" behavior all exist.
+              关键字触发、远端启动、CCR 轮询、传回本地的流程都在。
+              <span class="en-note">One of the strongest hidden-mode findings in the snapshot.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status strong">Strong evidence</div>
-            <h3>Ultrareview</h3>
+            <div class="status strong">强证据 / Strong evidence</div>
+            <h3>Ultrareview 云端评审</h3>
             <p>
-              The remote review command has its own enablement gate, quota API,
-              repo-size handling, and dedicated remote execution path.
+              有独立的启用逻辑、quota API、repo 尺寸判断和远端执行路径。
+              <span class="en-note">Remote review is clearly real and product-shaped.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status gated">Real + gated</div>
-            <h3>Voice Mode</h3>
+            <div class="status gated">实装但受 gate 控制 / Real + gated</div>
+            <h3>Voice 语音模式</h3>
             <p>
-              <code>voice_stream</code> STT, prompt footer UX, keybindings, and
-              REPL integration exist, but the file header itself says it is only
-              reachable in builds gated by <code>VOICE_MODE</code>.
+              <code>voice_stream</code>、提示栏、快捷键和 REPL 集成都有，但文件头也明确写了只在
+              <code>VOICE_MODE</code> build 下可达。
+              <span class="en-note">Real STT/voice surface, but explicitly build-gated.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status strong">Strong evidence</div>
-            <h3>Advisor</h3>
+            <div class="status strong">强证据 / Strong evidence</div>
+            <h3>Advisor 顾问模型</h3>
             <p>
-              The advisor tool is a real server-side surface with dedicated
-              message/result types, CLI configuration, model checks, and API
-              beta-header behavior.
+              有独立消息类型、CLI 配置、模型能力检查和 beta header 行为。
+              <span class="en-note">A first-class server-side advisor tool surface.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status strong">Strong evidence</div>
+            <div class="status strong">强证据 / Strong evidence</div>
             <h3>Claude In Chrome</h3>
             <p>
-              Browser integration is not speculative. There is a Chrome command,
-              onboarding UI, extension reconnect flow, and in-process MCP server
-              support.
+              有浏览器命令、onboarding、extension reconnect 和 in-process MCP 支持。
+              <span class="en-note">Browser integration is clearly implemented, not hypothetical.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status strong">Strong evidence</div>
+            <div class="status strong">强证据 / Strong evidence</div>
             <h3>Terminal Panel</h3>
             <p>
-              <code>src/utils/terminalPanel.ts</code> is a real built-in
-              terminal sidecar with tmux-backed persistence and a documented
-              <code>Meta+J</code> toggle path.
+              <code>src/utils/terminalPanel.ts</code> 明确实现了基于 tmux 的内置终端侧栏。
+              <span class="en-note">Built-in shell sidecar with persistence when tmux is available.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status gated">Real + gated</div>
+            <div class="status gated">实装但受 gate 控制 / Real + gated</div>
             <h3>Team Memory + Swarms</h3>
             <p>
-              <code>TEAMMEM</code>, TeamCreate, teammate spawning, coordinator
-              mode, shared task lists, and mailbox-style coordination are all
-              real. The surface is substantial, but not universally baseline-on.
+              <code>TEAMMEM</code>、TeamCreate、teammate spawning、coordinator mode 都是实打实的产品面。
+              <span class="en-note">Real team-memory and multi-agent coordination stack.</span>
             </p>
           </article>
         </div>
@@ -614,59 +641,53 @@
       <section class="panel section">
         <div class="section-head">
           <div>
-            <h2>Claims That Need Caveats</h2>
+            <h2>需要保留意见的说法</h2>
+            <div class="dual">Claims That Need Caveats</div>
           </div>
           <p>
-            These are the places where poster-style summaries usually get ahead
-            of what this specific snapshot can safely prove.
+            这部分不是说“错”，而是说如果想写成严谨的技术结论，就不能像海报那样一笔带过。
           </p>
         </div>
         <div class="grid caveats-grid">
           <article class="card">
-            <div class="status caveat">Over-read</div>
+            <div class="status caveat">表述过强 / Over-read</div>
             <h3>Daemon</h3>
             <p>
-              The snapshot definitely contains assistant daemon mode, daemon
-              workers, and cron/SDK daemon references. What it does not cleanly
-              prove is a general always-on background service mode in the broad
-              marketing sense.
+              源码里确实有 assistant daemon mode、daemon worker、cron/SDK daemon 相关内容，
+              但它并不足以证明一个通用、成熟、对外公开的后台常驻服务模式。
+              <span class="en-note">The direction is real; the poster wording is too confident.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status partial">Partially inspectable</div>
+            <div class="status partial">只能部分验证 / Partially inspectable</div>
             <h3>Self-Hosted Runner</h3>
             <p>
-              <code>src/entrypoints/cli.tsx</code> contains a real
-              <code>SELF_HOSTED_RUNNER</code> fast path, but the imported
-              implementation directory is missing from this snapshot.
+              <code>cli.tsx</code> 里有真实入口，但这份 snapshot 缺少导入的完整实现目录。
+              <span class="en-note">The entry path is real, but the full subsystem is not inspectable here.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status caveat">Metric caveat</div>
-            <h3>"500+ Runtime Gates"</h3>
+            <div class="status caveat">统计口径问题 / Metric caveat</div>
+            <h3>500+ Runtime Gates</h3>
             <p>
-              This is only safe if the counting rule is stated. Exact grep
-              supports <code>89</code> unique feature symbols and
-              <code>941</code> feature call sites, but "runtime gate" is a much
-              fuzzier bucket.
+              这类数字只有在先定义“runtime gate”算什么之后才有意义。
+              <span class="en-note">Without a counting rule, this is not a stable technical metric.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status caveat">Not a code claim</div>
+            <div class="status caveat">不是源码结论 / Not a code claim</div>
             <h3>Leak / Discovery Story</h3>
             <p>
-              Provenance and disclosure chronology are not things the source
-              tree can prove by itself. They belong in attribution notes, not in
-              the technical feature verdicts.
+              泄漏来源、谁先发现，属于 provenance 问题，不是源码结构本身能证明的结论。
+              <span class="en-note">Keep this in attribution notes, not in the feature verdicts.</span>
             </p>
           </article>
         </div>
 
         <div class="footer-strip">
-          Open the <a href="./feature-atlas-zh.html">Chinese / bilingual atlas</a>
-          for the same conclusion in a Chinese-first layout, or jump back to the
-          <a href="./report.html">full HTML report</a> for the longer
-          architectural analysis.
+          如果你想看纯英文版，打开
+          <a href="./feature-atlas.html">English feature atlas</a>。如果你想看更完整的长报告，打开
+          <a href="./report.html">full HTML report</a>。
         </div>
       </section>
     </div>
