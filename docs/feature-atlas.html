@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Claude Code Hidden / Gated Feature Atlas</title>
+    <style>
+      :root {
+        --bg: #f6f8fc;
+        --paper: #ffffff;
+        --paper-soft: #f3f7fd;
+        --line: #d8e2ef;
+        --ink: #172033;
+        --muted: #61748e;
+        --blue: #2563eb;
+        --blue-fill: #eef4ff;
+        --green: #10b981;
+        --green-fill: #eefaf5;
+        --orange: #f59e0b;
+        --orange-fill: #fff8eb;
+        --purple: #8b5cf6;
+        --purple-fill: #f5efff;
+        --rose: #ef476f;
+        --rose-fill: #fff1f5;
+        --teal: #0ea5a3;
+        --teal-fill: #edfcfb;
+        --shadow: 0 18px 44px rgba(18, 35, 61, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
+          radial-gradient(circle at top right, rgba(14, 165, 163, 0.08), transparent 24%),
+          linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        max-width: 1420px;
+        margin: 0 auto;
+        padding: 28px 28px 72px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .kicker,
+      .backlink {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(37, 99, 235, 0.22);
+        background: var(--blue-fill);
+        color: var(--blue);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .backlink::before,
+      .kicker::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .top-metrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .metric {
+        min-width: 132px;
+        padding: 10px 14px 9px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        box-shadow: 0 10px 24px rgba(18, 35, 61, 0.04);
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 18px;
+        line-height: 1.05;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+
+      .metric.blue {
+        background: var(--blue-fill);
+        border-color: rgba(37, 99, 235, 0.26);
+      }
+
+      .metric.blue strong {
+        color: var(--blue);
+      }
+
+      .metric.green {
+        background: var(--green-fill);
+        border-color: rgba(16, 185, 129, 0.26);
+      }
+
+      .metric.green strong {
+        color: var(--green);
+      }
+
+      .metric.purple {
+        background: var(--purple-fill);
+        border-color: rgba(139, 92, 246, 0.26);
+      }
+
+      .metric.purple strong {
+        color: var(--purple);
+      }
+
+      .panel {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 22px;
+        align-items: stretch;
+      }
+
+      .hero-copy {
+        position: relative;
+        padding: 34px;
+        overflow: hidden;
+      }
+
+      .hero-copy::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 8px;
+        background: linear-gradient(180deg, var(--blue), var(--teal));
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+      }
+
+      h1 {
+        margin-top: 18px;
+        font-size: clamp(34px, 4.1vw, 58px);
+        line-height: 0.96;
+        letter-spacing: -0.04em;
+      }
+
+      .hero-copy p,
+      .summary-card p,
+      .note-card p,
+      .count-card p,
+      .card p,
+      li {
+        color: var(--muted);
+        line-height: 1.58;
+      }
+
+      .hero-copy p {
+        max-width: 63ch;
+        font-size: 18px;
+      }
+
+      .summary-grid,
+      .evidence-grid,
+      .caveat-grid,
+      .count-grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .evidence-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .caveat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .count-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .hero-side,
+      .section,
+      .summary-card,
+      .note-card,
+      .count-card,
+      .card {
+        padding: 24px;
+      }
+
+      .hero-side {
+        display: grid;
+        gap: 16px;
+      }
+
+      .summary-card,
+      .note-card,
+      .count-card,
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: var(--paper-soft);
+      }
+
+      .summary-card.good {
+        background: var(--green-fill);
+        border-color: rgba(16, 185, 129, 0.24);
+      }
+
+      .summary-card.caution {
+        background: var(--orange-fill);
+        border-color: rgba(245, 158, 11, 0.24);
+      }
+
+      .note-card {
+        background: var(--blue-fill);
+        border-color: rgba(37, 99, 235, 0.24);
+      }
+
+      .count-card strong {
+        display: block;
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .count-card span {
+        display: block;
+        margin-top: 8px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .card strong {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .status-strong {
+        background: var(--green-fill);
+        color: var(--green);
+      }
+
+      .status-gated {
+        background: var(--purple-fill);
+        color: var(--purple);
+      }
+
+      .status-caveat {
+        background: var(--orange-fill);
+        color: var(--orange);
+      }
+
+      .status-partial {
+        background: var(--rose-fill);
+        color: var(--rose);
+      }
+
+      .card h3 {
+        font-size: 23px;
+        line-height: 1.08;
+        margin-bottom: 8px;
+      }
+
+      .card code,
+      .note-card code {
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: rgba(23, 32, 51, 0.06);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.92em;
+      }
+
+      .section {
+        margin-top: 22px;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: end;
+        margin-bottom: 16px;
+      }
+
+      .section-head p {
+        max-width: 72ch;
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .footer-strip {
+        margin-top: 22px;
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 1100px) {
+        .hero,
+        .summary-grid,
+        .evidence-grid,
+        .caveat-grid,
+        .count-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar,
+        .section-head {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        h1 {
+          white-space: normal;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="topbar">
+        <a class="backlink" href="./">Back To Analysis Hub</a>
+        <div class="top-metrics">
+          <div class="metric blue">
+            <strong>1,902</strong>
+            <span>source files</span>
+          </div>
+          <div class="metric green">
+            <strong>513,237</strong>
+            <span>LOC analyzed</span>
+          </div>
+          <div class="metric purple">
+            <strong>89</strong>
+            <span>feature symbols</span>
+          </div>
+        </div>
+      </div>
+
+      <header class="hero">
+        <div class="panel hero-copy">
+          <div class="kicker">Source-backed compact view</div>
+          <h1>Hidden / Gated Feature Atlas</h1>
+          <p>
+            A stricter answer to the "hidden Claude Code features" discussion.
+            This page separates what is clearly implemented in the source tree
+            from what is only gated, partially inspectable, or overstated by
+            poster-style summaries.
+          </p>
+        </div>
+        <div class="panel hero-side">
+          <div class="summary-card good">
+            <h3>What the viral summary gets right</h3>
+            <p>
+              Buddy, KAIROS, Auto-Dream, Ultraplan, Ultrareview, Voice,
+              Teleport, Chrome, Terminal Panel, Team Memory, and swarm-style
+              coordination are all real feature families in this snapshot.
+            </p>
+          </div>
+          <div class="summary-card caution">
+            <h3>What it gets too confident about</h3>
+            <p>
+              "Daemon" and "self-hosted runner" need caveats, and counts like
+              <code>500+ runtime gates</code> are only valid if the counting
+              method is disclosed.
+            </p>
+          </div>
+          <div class="note-card">
+            <h3>Best one-line judgment</h3>
+            <p>
+              This source tree looks like a shipped core runtime surrounded by a
+              large ring of gated, preview, enterprise, and build-variant
+              capabilities.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel section">
+        <div class="section-head">
+          <div>
+            <h2>Count Hygiene</h2>
+          </div>
+          <p>
+            These are the safest compact numbers to lead with. They are based on
+            exact repo-level counting rules rather than poster-style round
+            numbers.
+          </p>
+        </div>
+        <div class="count-grid">
+          <div class="count-card">
+            <strong>89</strong>
+            <span>unique all-caps <code>feature('FLAG')</code> symbols</span>
+            <p>Good headline metric for variant pressure.</p>
+          </div>
+          <div class="count-card">
+            <strong>941</strong>
+            <span><code>feature('...')</code> call sites</span>
+            <p>Closer to what people mean when they say the tree is heavily gated.</p>
+          </div>
+          <div class="count-card">
+            <strong>86</strong>
+            <span>command surfaces</span>
+            <p>Broader than slash commands, but a more stable repo-level count.</p>
+          </div>
+          <div class="count-card">
+            <strong>42</strong>
+            <span>tool directories</span>
+            <p>Useful for understanding breadth, but not the same as "agent tools".</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <div class="section-head">
+          <div>
+            <h2>Strongly Supported Features</h2>
+          </div>
+          <p>
+            These are the poster claims that are clearly backed by real source
+            implementation, even when some of them are still gated.
+          </p>
+        </div>
+        <div class="evidence-grid">
+          <article class="card">
+            <strong class="status-gated">Real + gated</strong>
+            <h3>Buddy / Companion</h3>
+            <p>
+              <code>src/buddy/</code> is substantial: 18 species, 5 rarities,
+              pet reactions, prompt triggers, REPL rendering, and persisted
+              companion soul/config state. This is not a stray joke string.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-gated">Real + gated</strong>
+            <h3>KAIROS Family</h3>
+            <p>
+              Assistant mode, Brief, Proactive, and Channels span
+              <code>src/main.tsx</code>, tools, services, and UI. The family is
+              large and real, but variant-driven rather than baseline.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-strong">Strong evidence</strong>
+            <h3>Auto-Dream</h3>
+            <p>
+              <code>src/services/autoDream/autoDream.ts</code> implements
+              background memory consolidation with its own lock, scheduler
+              checks, forked task path, and completion handling.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-gated">Real + gated</strong>
+            <h3>UDS Inbox</h3>
+            <p>
+              Cross-session / peer messaging is source-backed through
+              <code>feature('UDS_INBOX')</code>, messaging socket setup, and
+              peer-facing tool surfaces such as <code>ListPeersTool</code>.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-strong">Strong evidence</strong>
+            <h3>Teleport / Remote Sessions</h3>
+            <p>
+              <code>teleportToRemote</code>, <code>--teleport</code>, CCR
+              session creation, session ingress, resume, and branch recovery are
+              all deeply implemented.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-gated">Real + gated</strong>
+            <h3>Ultraplan</h3>
+            <p>
+              <code>feature('ULTRAPLAN')</code>, keyword routing, remote launch,
+              CCR polling, and "teleport back to terminal" flow all exist. This
+              is one of the strongest hidden-mode findings.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-strong">Strong evidence</strong>
+            <h3>Ultrareview</h3>
+            <p>
+              The review command has its own enablement gate, remote execution
+              path, quota API, and repo-size handling. The cloud review path is
+              clearly real.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-gated">Real + gated</strong>
+            <h3>Voice Mode</h3>
+            <p>
+              <code>voice_stream</code> STT, prompt footer UX, keybindings, and
+              REPL integration exist, but the file header itself says it is only
+              reachable in builds gated by <code>VOICE_MODE</code>.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-strong">Strong evidence</strong>
+            <h3>Advisor</h3>
+            <p>
+              The advisor tool is a first-class server-side tool surface with
+              dedicated message/result types, CLI configuration, model checks,
+              and API beta-header behavior.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-strong">Strong evidence</strong>
+            <h3>Claude In Chrome</h3>
+            <p>
+              Browser integration is not speculative. There is a Chrome command,
+              onboarding UI, extension reconnect flow, and in-process MCP server
+              support.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-strong">Strong evidence</strong>
+            <h3>Terminal Panel</h3>
+            <p>
+              <code>src/utils/terminalPanel.ts</code> is a real built-in
+              terminal sidecar with tmux-backed persistence and a documented
+              <code>Meta+J</code> toggle path.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-strong">Strong evidence</strong>
+            <h3>Plugin Marketplace</h3>
+            <p>
+              Marketplace add/list/update/remove, background installation,
+              discovery, plugin enable/disable, and official marketplace wiring
+              all exist as productized surfaces.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-gated">Real + gated</strong>
+            <h3>Team Memory</h3>
+            <p>
+              The <code>TEAMMEM</code> subsystem includes sync, secret guarding,
+              watcher logic, and memory-file handling. It is clearly real, but
+              not baseline-on.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-gated">Real + gated</strong>
+            <h3>Coordinator / Swarms</h3>
+            <p>
+              Coordinator mode, TeamCreate, tmux/in-process teammate spawning,
+              shared task lists, and mailbox-style coordination are all deeply
+              implemented.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-partial">Deep but constrained</strong>
+            <h3>Computer Use MCP</h3>
+            <p>
+              The stack is real and non-trivial, but it appears platform- and
+              build-constrained rather than something this snapshot proves to be
+              universally available.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-strong">Strong evidence</strong>
+            <h3>AFK / Away Summary</h3>
+            <p>
+              The "while you were away" recap card is source-backed through
+              <code>src/services/awaySummary.ts</code> and related AFK-mode
+              plumbing.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <div class="section-head">
+          <div>
+            <h2>Claims That Need Caveats</h2>
+          </div>
+          <p>
+            These are the places where the viral-summary format gets too
+            confident, or where this snapshot does not expose enough of the
+            implementation to speak that strongly.
+          </p>
+        </div>
+        <div class="caveat-grid">
+          <article class="card">
+            <strong class="status-caveat">Over-read</strong>
+            <h3>Daemon</h3>
+            <p>
+              The snapshot definitely contains assistant daemon mode, daemon
+              workers, and cron/SDK daemon references. What it does <em>not</em>
+              cleanly prove is a general always-on background service mode in
+              the broad marketing sense.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-partial">Partially inspectable</strong>
+            <h3>Self-Hosted Runner</h3>
+            <p>
+              <code>src/entrypoints/cli.tsx</code> contains a real
+              <code>SELF_HOSTED_RUNNER</code> fast path, but the imported
+              implementation directory is missing from this snapshot. The entry
+              surface is real; the full subsystem is not fully inspectable here.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-caveat">Metric caveat</strong>
+            <h3>"500+ Runtime Gates"</h3>
+            <p>
+              This is only a safe claim if the counting rule is stated up front.
+              Exact grep supports <code>89</code> unique feature symbols and
+              <code>941</code> feature call sites, but "runtime gate" is a much
+              fuzzier bucket.
+            </p>
+          </article>
+          <article class="card">
+            <strong class="status-caveat">Not a code claim</strong>
+            <h3>Leak / Discovery Story</h3>
+            <p>
+              Provenance and disclosure chronology are not things the source tree
+              can prove by itself. They belong in attribution notes, not in the
+              technical feature verdicts.
+            </p>
+          </article>
+        </div>
+
+        <div class="footer-strip">
+          Use this page as the compact, source-backed answer. Use the full
+          <a href="./report.html">HTML analysis report</a> when you need the
+          longer architectural argument and the broader codebase review.
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

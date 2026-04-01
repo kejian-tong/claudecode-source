@@ -15,8 +15,10 @@ Around March 31, 2026, community and media coverage widely credited Chaofan Shou
 ## Start Here
 
 - [Open interactive landing page](https://kejian-tong.github.io/claudecode-source/)
+- [Open hidden / gated feature atlas](https://kejian-tong.github.io/claudecode-source/feature-atlas.html)
 - [Open full HTML analysis report](https://kejian-tong.github.io/claudecode-source/report.html)
 - [Read full Markdown analysis report](ANALYSIS_REPORT.md)
+- [Read compact hidden-feature evidence map](FEATURE_ATLAS.md)
 - [Read user-facing guide](USER_GUIDE.md)
 - [Read engineering guide](MAINTAINER_GUIDE.md)
 - [Browse visual assets](docs/assets/)
