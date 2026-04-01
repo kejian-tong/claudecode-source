@@ -16,6 +16,19 @@ This repository snapshot appears to contain only the `src/` tree. There is no pa
 
 All findings below are grounded in the code under `src/`.
 
+For source context, Anthropic officially distributes Claude Code through at
+least its public GitHub repository and the public npm package
+`@anthropic-ai/claude-code`. Community discussion around this snapshot has
+generally described it as code recovered from official Anthropic-distributed
+client artifacts, including bundled files and exposed source-map paths.
+
+I treat that as contextual background, not a fully reconstructed provenance
+chain. In particular, I do **not** assert a specific extraction workflow or
+package-version claim unless it is independently verifiable from primary
+sources. For example, the npm registry currently does not list
+`@anthropic-ai/claude-code@2.1.88`, so that exact version label is not used
+here as an established fact.
+
 ## Executive Summary
 
 This is a large, production-grade TypeScript/Bun codebase for a terminal-first AI coding product. It is not a small CLI with a few commands. It is a product platform that combines:
@@ -40,6 +53,147 @@ My overall judgment is:
 - Extension-heavy by design
 - Harder to reason about than it should be in its current size
 - In need of more explicit architectural boundaries and better verification coverage
+
+## Product Design And UX Model
+
+This codebase is best understood as a terminal-native operating environment, not
+as a single chat screen with tools attached.
+
+Three product-design choices are especially clear from the source:
+
+### 1. The product is organized around workflow continuity
+
+The runtime assumes users do not finish work in one short turn. That is why the
+code invests so heavily in:
+
+- transcript persistence
+- resume and named sessions
+- compaction and session-memory recovery
+- background tasks and remote sessions
+- terminal panel, IDE bridges, and browser-adjacent surfaces
+
+The product design message is implicit but strong: preserve working context,
+preserve task momentum, and let the session survive interruptions.
+
+### 2. The interface is multi-surface, not single-surface
+
+The same conceptual runtime is exposed through several distinct interaction
+modes:
+
+- interactive REPL/TUI
+- headless structured I/O / SDK mode
+- MCP server mode
+- remote session and bridge flows
+- IDE and browser-adjacent integrations
+
+This is an important product-design fact. Claude Code is not designed as “the
+CLI version” of something else. The terminal shell is one primary surface of a
+broader runtime.
+
+### 3. Human control is built into the experience model
+
+The UX model is not “full autonomy first.” The source repeatedly routes through:
+
+- permission prompts
+- tool approvals
+- policy checks
+- pre/post hooks
+- teammate permission mediation
+- managed settings and enterprise controls
+
+That makes the product feel less like an unconstrained agent and more like a
+supervised execution environment where the user remains the final authority at
+the trust boundary.
+
+## Security Model And Trust Boundaries
+
+The security work in this codebase is strong enough that it deserves to be read
+as an architectural subsystem, not a grab bag of validations.
+
+### Primary trust boundaries
+
+The code enforces several distinct boundaries:
+
+1. Model output vs runtime execution
+2. Runtime vs local filesystem
+3. Runtime vs shell invocation
+4. Local process vs remote/MCP/plugin surfaces
+5. Foreground session vs background agents/teammates
+6. User settings vs remotely managed or enterprise policy inputs
+
+That boundary thinking is visible across tools, permissions, hooks, MCP, and
+session handling.
+
+### How the defense-in-depth model works
+
+The safety stack is layered rather than singular:
+
+- schema validation on tool inputs and outputs
+- permission modes and rule provenance
+- parser-aware Bash and PowerShell validation
+- read-only/path safety checks
+- hook interception before and after tool execution
+- approval UI for high-risk actions
+- explicit managed-settings security review flows
+- telemetry and audit-style state transitions around tool use
+
+This is materially stronger than the “regex around shell commands” pattern that
+many AI tool-runners stop at.
+
+### Security posture by subsystem
+
+- Shell tools: strongest and most mature security surface
+- File tools: guarded by permission and path logic
+- MCP/plugin surfaces: broader trust boundary, therefore more compatibility and policy risk
+- Agent/team surfaces: safe in concept, but increase lifecycle and authority complexity
+- Session storage: mostly operationally robust, but sensitive because it is the continuity substrate
+
+### Residual security risks
+
+The source still carries real risk areas:
+
+- global/module-scope state can blur authority boundaries
+- variant-heavy behavior makes exhaustive verification difficult
+- extension surfaces widen the trusted-computing boundary
+- giant hotspot files are harder to secure-review with confidence
+
+## Engineering Practice And Delivery Maturity
+
+Even from a partial snapshot, the engineering style is visible.
+
+### What looks mature
+
+- startup-performance discipline via fast paths, dynamic imports, and import ordering
+- strong schema/type usage for settings, tools, MCP, and API payloads
+- explicit compatibility handling in transcripts and persisted state
+- operational instrumentation and analytics hygiene
+- real attention to recovery paths, retries, and degraded-mode behavior
+
+This is the engineering profile of a team that has already hit production-scale
+edge cases.
+
+### What looks incomplete or obscured by the snapshot
+
+The snapshot does **not** include:
+
+- tests worth evaluating as a verification system
+- package manifests or lockfiles
+- CI configuration
+- release automation
+- commit history showing architectural intent over time
+
+That means I can assess implementation maturity much better than delivery
+maturity. The code often looks production-hardened, but the full engineering
+practice around build, release, and regression prevention is not fully visible
+here.
+
+### Engineering weaknesses visible from code alone
+
+- hotspot files are too large for comfortable ownership
+- `utils/` has become an application layer
+- feature-flag branching increases path explosion
+- compiler-transformed UI files reduce readability
+- singleton/module-scope patterns raise coupling and teardown risk
 
 ## Feature Maturity Map
 
@@ -149,7 +303,8 @@ My best source-grounded reading is:
 | `class` declarations | 188 |
 | `TODO` markers | 138 |
 | Files importing `react/compiler-runtime` | 395 |
-| Unique `feature(...)` flags | 90 |
+| Exact all-caps `feature('FLAG')` symbols | 89 |
+| Exact `feature('...')` call sites | 941 |
 
 ### Top folders by source size
 
@@ -401,7 +556,7 @@ Evidence:
 - `src/entrypoints/cli.tsx` is mostly fast-path dispatch with dynamic imports.
 - `src/main.tsx` explicitly overlaps expensive startup work like MDM reads and keychain prefetch.
 - There are 645 dynamic imports and 277 `require(...)` calls across the repo.
-- There are 90 unique `feature(...)` flags.
+- There are 89 exact all-caps `feature('FLAG')` symbols and 941 `feature('...')` call sites.
 
 Interpretation:
 
@@ -693,7 +848,7 @@ This is the kind of infrastructure you only build when the CLI is already a seri
 
 ## 1. Feature-flag-first architecture
 
-The codebase uses 90 unique compile-time `feature(...)` gates. The most common are:
+The codebase uses 89 exact all-caps `feature('FLAG')` symbols and 941 `feature('...')` call sites. The most common families are:
 
 | Flag | Count |
 | --- | ---: |
@@ -821,7 +976,7 @@ That is workable until it stops being workable. The import-edge data suggests th
 
 ## 3. Variant complexity from feature flags
 
-90 feature flags is not merely “configurable.” It means there are many effectively different products compiled from the same source tree. That increases:
+89 exact feature symbols and 941 call sites is not merely “configurable.” It means there are many effectively different products compiled from the same source tree. That increases:
 
 - testing burden
 - mental overhead

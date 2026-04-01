@@ -21,7 +21,11 @@ Anthropic publicly distributes Claude Code through official channels, including:
 
 This repository is separate from those official channels. It analyzes the source snapshot committed here under `src/` as a standalone technical artifact.
 
+Community discussion around this snapshot has generally described it as source recovered from official Anthropic-distributed Claude Code client artifacts, including publicly shipped bundled files and exposed source-map paths. This repository treats that as contextual background, not as a fully reconstructed provenance chain.
+
 This repository does not independently certify the exact extraction workflow, package version, or file-by-file provenance relationship between the committed `src/` tree and Anthropic's current upstream releases. It only states that Claude Code itself is officially distributed by Anthropic through the channels above.
+
+In particular, this README does not repeat specific package-version claims unless they are independently verifiable from primary sources. For example, the npm registry currently does not list `@anthropic-ai/claude-code@2.1.88`, so that exact version label is not stated here as an established fact.
 
 Around March 31, 2026, community reporting widely credited Chaofan Shou ([@Fried_rice on X](https://x.com/Fried_rice/status/2038894956459290963)) with publicly drawing attention to this snapshot. That attribution is included only as historical context, not as a source-code conclusion.
 

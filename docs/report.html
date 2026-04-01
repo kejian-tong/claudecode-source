@@ -345,11 +345,15 @@
     <aside class="toc">
       <h2>Contents</h2>
       <a href="#summary">Summary</a>
+      <a href="#source-context">Source Context</a>
+      <a href="#product-design">Product Design</a>
       <a href="#metrics">Metrics</a>
       <a href="#release-map">Feature Maturity</a>
       <a href="#shape">What The System Is</a>
       <a href="#flow">Runtime Flow</a>
       <a href="#subsystems">Subsystems</a>
+      <a href="#security-model">Security Model</a>
+      <a href="#engineering-practice">Engineering Practice</a>
       <a href="#patterns">Patterns</a>
       <a href="#strengths">Strengths</a>
       <a href="#risks">Risks</a>
@@ -379,7 +383,7 @@
       <div class="metrics-grid" id="metrics">
         <div class="metric"><strong>1,902</strong><span>source files under <code>src/</code></span></div>
         <div class="metric"><strong>513,237</strong><span>approx. code lines in TS/TSX/JS/JSX</span></div>
-        <div class="metric"><strong>90</strong><span>unique compile-time feature flags</span></div>
+        <div class="metric"><strong>89</strong><span>exact all-caps <code>feature('FLAG')</code> symbols</span></div>
         <div class="metric"><strong>395</strong><span>files importing <code>react/compiler-runtime</code></span></div>
       </div>
 
@@ -411,6 +415,61 @@
               <li>Feature-flag branching and module singletons make global reasoning harder than it should be.</li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section id="source-context">
+        <h2>Scope And Source Context</h2>
+        <p>
+          This analysis is grounded only in the committed <code>src/</code> snapshot inside this repository. It does not include the
+          full package metadata, lockfiles, CI pipeline, or release automation that would normally surround a production codebase.
+        </p>
+        <p>
+          Anthropic officially distributes Claude Code through public channels including the
+          <a href="https://github.com/anthropics/claude-code">official GitHub repository</a> and the
+          <a href="https://www.npmjs.com/package/@anthropic-ai/claude-code">official npm package</a>.
+          Community discussion around this snapshot has generally described it as code recovered from official Anthropic-distributed client
+          artifacts, including bundled files and exposed source-map paths.
+        </p>
+        <div class="callout">
+          This report treats that as source context, not as a fully reconstructed provenance chain. It does not assert a specific extraction
+          workflow or package-version label unless primary sources support it directly. In particular, the npm registry does not currently list
+          <code>@anthropic-ai/claude-code@2.1.88</code>, so that exact version claim is not repeated here as an established fact.
+        </div>
+      </section>
+
+      <section id="product-design">
+        <h2>Product Design And UX Model</h2>
+        <p>
+          The source reads like a terminal-native operating environment, not a single chat pane with tools attached.
+          The product design centers on preserving working context, supporting multiple interaction surfaces, and keeping
+          the user inside the approval loop when trust boundaries are crossed.
+        </p>
+        <div class="twocol">
+          <div class="card">
+            <h3>Workflow Continuity Is The Core UX Bet</h3>
+            <ul>
+              <li>Transcript persistence, resume, compaction, and session-memory reinjection are first-class.</li>
+              <li>Background tasks, remote sessions, terminal panel, and IDE/browser-adjacent surfaces all preserve momentum across interruptions.</li>
+              <li>The runtime assumes users work over long-lived sessions, not isolated one-shot prompts.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Multi-Surface By Design</h3>
+            <ul>
+              <li>Interactive REPL/TUI</li>
+              <li>Headless structured I/O and SDK-compatible flows</li>
+              <li>MCP server mode</li>
+              <li>Remote session, bridge, browser, and IDE-adjacent paths</li>
+            </ul>
+            <p>
+              Claude Code is therefore better described as one runtime exposed through several surfaces than as a single CLI mode.
+            </p>
+          </div>
+        </div>
+        <div class="callout">
+          The source repeatedly favors supervised autonomy over unconstrained autonomy:
+          permissions, hooks, approvals, managed settings, and teammate mediation all keep a human or policy layer at the execution boundary.
         </div>
       </section>
 
@@ -694,6 +753,77 @@
         </p>
       </section>
 
+      <section id="security-model">
+        <h2>Security Model And Trust Boundaries</h2>
+        <p>
+          Security is not a thin wrapper here. The code treats safety as a layered runtime concern across model output,
+          shell execution, file access, extension boundaries, and managed configuration.
+        </p>
+        <div class="twocol">
+          <div class="card">
+            <h3>Primary Trust Boundaries</h3>
+            <ul>
+              <li>Model output vs executable runtime behavior</li>
+              <li>Runtime vs local filesystem and shell</li>
+              <li>Local runtime vs remote, MCP, plugin, and browser surfaces</li>
+              <li>Foreground session vs background agents and teammates</li>
+              <li>User-local settings vs remote-managed or enterprise policy inputs</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Defense-In-Depth Mechanisms</h3>
+            <ul>
+              <li>Schema validation around tools and settings</li>
+              <li>Permission modes plus rule provenance</li>
+              <li>Parser-aware Bash and PowerShell validation</li>
+              <li>Read-only and path safety enforcement</li>
+              <li>Pre/post hooks and approval UIs for risky actions</li>
+              <li>Managed-settings security review flows</li>
+            </ul>
+          </div>
+        </div>
+        <p>
+          The strongest part of the security posture is shell/tool mediation. The weakest part is not obvious negligence,
+          but the natural difficulty of verifying many gated paths, extension surfaces, and global state interactions at once.
+        </p>
+      </section>
+
+      <section id="engineering-practice">
+        <h2>Engineering Practice And Delivery Maturity</h2>
+        <p>
+          Even though this repository snapshot omits tests, manifests, and CI files, the implementation style still reveals a lot
+          about the engineering culture behind it.
+        </p>
+        <div class="twocol">
+          <div class="card">
+            <h3>Practices That Look Mature</h3>
+            <ul>
+              <li>Fast-path entrypoints and deliberate startup-cost management</li>
+              <li>Heavy schema/type use around settings, tools, MCP, and APIs</li>
+              <li>Compatibility handling in transcripts and persisted state</li>
+              <li>Operational instrumentation and analytics hygiene</li>
+              <li>Recovery paths for compaction, retries, resume, and degraded operation</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Practices Hidden Or Missing Here</h3>
+            <ul>
+              <li>No meaningful test suite is visible in the snapshot</li>
+              <li>No package manifests or lockfiles</li>
+              <li>No CI/release automation</li>
+              <li>No commit history to show architectural intent over time</li>
+            </ul>
+            <p>
+              That means the code shows strong implementation maturity, but only partial evidence for the surrounding delivery system.
+            </p>
+          </div>
+        </div>
+        <div class="callout">
+          The engineering style looks production-hardened, but the repository snapshot still underspecifies the full build, verification,
+          and release discipline around it. This is a visibility limit, not necessarily a product weakness.
+        </div>
+      </section>
+
       <section id="patterns">
         <h2>Architectural Patterns</h2>
         <div class="twocol">
@@ -757,8 +887,8 @@
 
         <h3>Variant complexity</h3>
         <p>
-          With 90 feature flags, the codebase effectively contains many related products. That raises testing burden, dead-path risk, and the
-          cost of safe refactoring.
+          With 89 exact feature symbols and 941 feature-gate call sites, the codebase effectively contains many related products. That raises
+          testing burden, dead-path risk, and the cost of safe refactoring.
         </p>
 
         <h3>Global state and singletons</h3>
