@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Claude Code 隐藏功能图谱</title>
+    <title>Claude Code 源码能力地图</title>
     <style>
       :root {
         --paper: #ffffff;
@@ -165,6 +165,7 @@
         display: grid;
         grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.75fr);
         gap: 22px;
+        align-items: start;
       }
 
       .hero-main {
@@ -218,7 +219,8 @@
       .hero-main p,
       .summary-card p,
       .card p,
-      .count-card p {
+      .count-card p,
+      .method-card p {
         color: var(--muted);
         line-height: 1.72;
       }
@@ -229,11 +231,30 @@
         font-size: 18px;
       }
 
+      .hero-points {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .hero-points li {
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.58;
+      }
+
       .en-note {
         display: block;
         margin-top: 8px;
         font-size: 13px;
-        line-height: 1.5;
+        line-height: 1.55;
         color: var(--muted);
       }
 
@@ -245,7 +266,8 @@
 
       .summary-card,
       .count-card,
-      .card {
+      .card,
+      .method-card {
         border: 1px solid var(--line);
         border-radius: 22px;
         background: var(--paper-soft);
@@ -255,19 +277,14 @@
         padding: 22px;
       }
 
-      .summary-card.good {
+      .summary-card.scope {
         background: var(--green-fill);
         border-color: rgba(16, 185, 129, 0.24);
       }
 
-      .summary-card.caution {
+      .summary-card.boundary {
         background: var(--orange-fill);
         border-color: rgba(245, 158, 11, 0.24);
-      }
-
-      .summary-card.note {
-        background: var(--blue-fill);
-        border-color: rgba(37, 99, 235, 0.24);
       }
 
       .section {
@@ -290,13 +307,29 @@
         line-height: 1.65;
       }
 
-      .count-grid {
+      .count-grid,
+      .grid,
+      .method-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 18px;
       }
 
-      .count-card {
+      .count-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .caveats-grid,
+      .method-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .count-card,
+      .card,
+      .method-card {
         padding: 22px;
       }
 
@@ -306,7 +339,8 @@
         line-height: 1;
       }
 
-      .count-card span {
+      .count-card span,
+      .method-card span {
         display: block;
         margin-top: 8px;
         font-size: 12px;
@@ -315,27 +349,15 @@
         color: var(--muted);
       }
 
-      .grid {
-        display: grid;
-        gap: 18px;
-      }
-
-      .features-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .caveats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .card {
-        padding: 22px;
-      }
-
       .status {
         margin-bottom: 12px;
         padding: 8px 12px;
         font-size: 12px;
+      }
+
+      .status.core {
+        background: var(--blue-fill);
+        color: var(--blue);
       }
 
       .status.strong {
@@ -348,17 +370,23 @@
         color: var(--purple);
       }
 
-      .status.caveat {
+      .status.scoped {
+        background: var(--teal-fill);
+        color: var(--teal);
+      }
+
+      .status.partial {
         background: var(--orange-fill);
         color: var(--orange);
       }
 
-      .status.partial {
+      .status.nonclaim {
         background: var(--rose-fill);
         color: var(--rose);
       }
 
-      .card h3 {
+      .card h3,
+      .method-card h3 {
         font-size: 22px;
         line-height: 1.14;
         margin-bottom: 8px;
@@ -374,8 +402,7 @@
         color: var(--muted);
       }
 
-      .card code,
-      .count-card code {
+      code {
         padding: 2px 6px;
         border-radius: 999px;
         background: rgba(23, 32, 51, 0.06);
@@ -398,7 +425,9 @@
         .hero,
         .count-grid,
         .features-grid,
-        .caveats-grid {
+        .caveats-grid,
+        .method-grid,
+        .hero-points {
           grid-template-columns: 1fr;
         }
 
@@ -415,7 +444,7 @@
       <div class="topbar">
         <div class="top-left">
           <a class="pill-link" href="./">返回首页 / Back To Hub</a>
-          <a class="pill-link" href="./feature-atlas.html">English Atlas</a>
+          <a class="pill-link" href="./feature-atlas.html">English Version</a>
         </div>
         <div class="top-metrics">
           <div class="metric blue">
@@ -428,50 +457,44 @@
           </div>
           <div class="metric purple">
             <strong>89</strong>
-            <span>feature 符号 / feature symbols</span>
+            <span>精确 feature 符号 / exact feature symbols</span>
           </div>
         </div>
       </div>
 
       <header class="hero">
         <div class="panel hero-main">
-          <div class="kicker">源码证据版 / source-backed compact view</div>
-          <h1>Claude Code 隐藏功能图谱</h1>
-          <div class="en-subtitle">Hidden / Gated Feature Atlas</div>
+          <div class="kicker">源码能力地图 / source-only capability map</div>
+          <h1>Claude Code 源码能力地图</h1>
+          <div class="en-subtitle">Claude Code Source Capability Map</div>
           <p>
-            这是一页更严格的“隐藏功能”总结：把源码里明确实现的功能、受
-            gate 控制的能力、以及目前证据还不够直接的说法分开写，避免把
-            “实现存在”直接写成“已经全面公开发布”。
+            这页只基于当前提交进仓库的 <code>src/</code> snapshot 来写。它把源码中能直接看到的能力面，
+            按“广泛实现的主干”“明确存在但带 gate 或范围约束的能力族”“当前只能部分验证的入口或子系统”分层整理，
+            不把外部发布状态、来源故事或营销式说法混进技术判断。
             <span class="en-note">
-              A stricter one-page reading of the hidden-feature discussion:
-              implemented surfaces, gated capabilities, and over-read claims are
-              deliberately separated.
+              This page is derived only from the committed snapshot. It separates broadly implemented runtime spine,
+              specialized but gated surfaces, and snapshot-limited evidence without making release-status or provenance claims.
             </span>
           </p>
+          <ul class="hero-points">
+            <li><strong>运行时主干</strong><br />持久化、模型循环、工具执行、远端会话和交互 UI 都是深实现。</li>
+            <li><strong>专门能力家族</strong><br />很多显眼功能确实存在，但常常受 gate、平台或 entitlement 约束。</li>
+            <li><strong>证据边界</strong><br />缺失导入目录或不属于源码问题的内容，不进入能力结论。</li>
+          </ul>
         </div>
         <div class="panel hero-side">
-          <div class="summary-card good">
-            <h3>这张海报大方向是对的</h3>
-            <span class="dual">What the viral summary gets right</span>
+          <div class="summary-card scope">
+            <h3>这页在说明什么</h3>
+            <span class="dual">What this page shows</span>
             <p>
-              Buddy、KAIROS、Auto-Dream、Ultraplan、Ultrareview、Voice、
-              Teleport、Chrome、Terminal Panel、Team Memory、Swarm 这些方向都不是空穴来风。
+              这份代码不是小型 CLI，而是一个带持久化、工具调度、远端执行、扩展接口和多种变体面的产品级运行时。
             </p>
           </div>
-          <div class="summary-card caution">
-            <h3>但有几处写法过头了</h3>
-            <span class="dual">What still needs caveats</span>
+          <div class="summary-card boundary">
+            <h3>这页不会声称什么</h3>
+            <span class="dual">What it will not claim</span>
             <p>
-              “Daemon”“Self-hosted runner” 需要保留意见，像
-              <code>500+ runtime gates</code> 这种数字也必须先说明统计口径。
-            </p>
-          </div>
-          <div class="summary-card note">
-            <h3>最稳的一句话结论</h3>
-            <span class="dual">Safest one-line judgment</span>
-            <p>
-              这份源码更像一个已经成熟上线的核心运行时，外面包着一大圈受 gate、
-              preview、enterprise 和 build-variant 控制的功能层。
+              代码能证明“实现存在”和“受何种控制”，但不能单靠自身证明“是否公开发布”“是否默认开启”或“外部传播来源”。
             </p>
           </div>
         </div>
@@ -480,59 +503,130 @@
       <section class="panel section">
         <div class="section-head">
           <div>
-            <h2>数字口径</h2>
-            <div class="dual">Count Hygiene</div>
+            <h2>可量化快照</h2>
+            <div class="dual">Measured Snapshot</div>
           </div>
           <p>
-            这些数字适合放在首页或摘要里，因为它们的统计方式比较稳定，不像“500+
-            runtime gates”那样高度依赖口径。
+            这些是最适合放到摘要里的数字，因为它们来自明确的仓库级统计规则，而不是依赖模糊口径的宣传式分类。
           </p>
         </div>
         <div class="count-grid">
           <div class="count-card">
-            <strong>89</strong>
-            <span>唯一的 all-caps <code>feature('FLAG')</code> 符号</span>
+            <strong>1,902</strong>
+            <span><code>src/</code> 下的源码文件</span>
             <p>
-              适合表达“变体压力很大”。
-              <span class="en-note">Stable headline metric for variant pressure.</span>
+              体量已经达到产品平台级，而不是单一命令行工具。
+              <span class="en-note">Large enough to behave like a product platform.</span>
+            </p>
+          </div>
+          <div class="count-card">
+            <strong>513,237</strong>
+            <span>TS / TSX / JS / JSX 代码行数</span>
+            <p>
+              这个规模足以支撑独立的架构、热点和维护成本分析。
+              <span class="en-note">Code volume is large enough to justify architecture and risk analysis.</span>
+            </p>
+          </div>
+          <div class="count-card">
+            <strong>89</strong>
+            <span>唯一的 <code>feature('FLAG')</code> 符号</span>
+            <p>
+              这是表达“变体压力很大”的最稳指标。
+              <span class="en-note">The strongest compact signal for build-time variant pressure.</span>
             </p>
           </div>
           <div class="count-card">
             <strong>941</strong>
             <span><code>feature('...')</code> 调用点</span>
             <p>
-              更接近大家口中“这个仓库到处都是 gate”时真正想表达的量级。
-              <span class="en-note">Closer to the intuitive "heavily gated" reading.</span>
+              比“很多 gate”这类口号更接近真实影响范围。
+              <span class="en-note">A better description of how widely gating influences behavior.</span>
             </p>
           </div>
-          <div class="count-card">
-            <strong>86</strong>
-            <span>命令面 / command surfaces</span>
-            <p>
-              比单纯数 slash commands 更稳。
-              <span class="en-note">Broader and more reliable than counting slash commands only.</span>
-            </p>
-          </div>
-          <div class="count-card">
-            <strong>42</strong>
-            <span>工具目录 / tool directories</span>
-            <p>
-              能反映广度，但不等于“47+ agent tools”这种海报口径。
-              <span class="en-note">Useful breadth signal, not the same as "agent tool" counts.</span>
-            </p>
-          </div>
+        </div>
+        <div class="footer-strip">
+          同一份 snapshot 的其他辅助广度指标还包括：
+          <code>86</code> 个命令面、<code>42</code> 个工具目录、
+          <code>645</code> 个动态导入、<code>104</code> 个 hook 文件、
+          <code>23</code> 个 MCP 文件、<code>46</code> 个 plugin-facing 文件。
         </div>
       </section>
 
       <section class="panel section">
         <div class="section-head">
           <div>
-            <h2>证据最强的功能面</h2>
-            <div class="dual">Strongly Supported Feature Families</div>
+            <h2>广泛实现的运行时主干</h2>
+            <div class="dual">Broadly Implemented Runtime Spine</div>
           </div>
           <p>
-            这部分是“海报里写出来基本站得住”的内容。即使它们有些仍然受 gate
-            控制，也确实不是几条字符串或半成品 stub。
+            这些不是边角料，而是贯穿 runtime、UI 和持久化层的主干能力。无论产品变体怎么切，这部分都构成了系统基本形态。
+          </p>
+        </div>
+        <div class="grid features-grid">
+          <article class="card">
+            <div class="status core">核心主干 / Core runtime</div>
+            <h3>会话持久化与压缩</h3>
+            <p>
+              <code>src/utils/sessionStorage.ts</code>、
+              <code>src/services/compact/compact.ts</code>、resume 和 transcript 读写逻辑说明：
+              长生命周期状态是运行时基座，不是聊天附属功能。
+              <span class="en-note">Persistence and compaction are first-class runtime substrate.</span>
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">核心主干 / Core runtime</div>
+            <h3>QueryEngine 与模型调度</h3>
+            <p>
+              <code>src/QueryEngine.ts</code>、
+              <code>src/services/api/claude.ts</code> 和 <code>src/main.tsx</code> 共同构成中心模型循环，
+              包含 streaming、hooks、beta 行为和跨轮状态处理。
+              <span class="en-note">The central model loop is broad and heavily integrated.</span>
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">核心主干 / Core runtime</div>
+            <h3>带权限的工具执行</h3>
+            <p>
+              <code>src/tools/</code>、shell 安全模块、审批 UI 和 hook 管线说明工具执行是最成熟、最防御化的区域之一。
+              <span class="en-note">Tool orchestration is one of the most developed and defended subsystems.</span>
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">核心主干 / Core runtime</div>
+            <h3>远端会话与 CCR 执行</h3>
+            <p>
+              <code>src/cli/</code>、remote transport、teleport 路径和 ingress 逻辑表明远端执行不是附加功能，而是结构性能力。
+              <span class="en-note">Remote execution is structural, not peripheral.</span>
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">核心主干 / Core runtime</div>
+            <h3>扩展层接入</h3>
+            <p>
+              MCP、plugins、bundled skills、hooks 和浏览器侧工具都接在同一运行时上，而不是各自孤立的子系统。
+              <span class="en-note">Extensions widen the same runtime rather than forming a separate stack.</span>
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">核心主干 / Core runtime</div>
+            <h3>交互式 UI 与终端表面</h3>
+            <p>
+              <code>src/screens/REPL.tsx</code>、<code>src/components/</code>、
+              <code>src/ink/</code> 和 terminal panel 工具链说明这是一套完整的交互式终端应用。
+              <span class="en-note">This is a full interactive shell app, not just a print-mode entrypoint.</span>
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <div class="section-head">
+          <div>
+            <h2>专门能力家族</h2>
+            <div class="dual">Specialized Capability Families</div>
+          </div>
+          <p>
+            这部分都能在源码中直接找到实现，但很多并不是“默认全开”的基础路径，而是受 gate、平台、产品档位或特定运行环境约束。
           </p>
         </div>
         <div class="grid features-grid">
@@ -540,99 +634,75 @@
             <div class="status gated">实装但受 gate 控制 / Real + gated</div>
             <h3>Buddy / 伴生宠物</h3>
             <p>
-              <code>src/buddy/</code> 是完整功能区：18 种 species、5 档 rarity、
-              <code>/buddy</code> 触发、REPL 精灵、配置持久化都在。
-              <span class="en-note">A real companion system, not a stray internal joke.</span>
+              <code>src/buddy/</code> 本身就是独立功能区，包含 18 种 species、5 档 rarity、REPL 精灵、触发命令和持久化状态。
+              <span class="en-note">A substantial companion subsystem, not a joke string.</span>
             </p>
           </article>
           <article class="card">
             <div class="status gated">实装但受 gate 控制 / Real + gated</div>
             <h3>KAIROS 家族</h3>
             <p>
-              Assistant mode、Brief、Proactive、Channels 跨
-              <code>main.tsx</code>、tools、services、UI 多层出现，是真实的大功能族。
-              <span class="en-note">Large cross-cutting family, but variant-driven rather than always-on.</span>
+              Assistant mode、Brief、Proactive、Channels 横跨 main、tools、services 和 UI，
+              是大而真实的能力族，但明显受变体开关控制。
+              <span class="en-note">Large cross-cutting family, but strongly variant-driven.</span>
             </p>
           </article>
           <article class="card">
             <div class="status strong">强证据 / Strong evidence</div>
             <h3>Auto-Dream 记忆整理</h3>
             <p>
-              有独立的后台调度、锁、fork 任务路径和完成回写逻辑。
-              <span class="en-note">Background memory consolidation is explicitly implemented.</span>
+              独立的 scheduler 检查、锁、consolidation prompt、fork 任务和回写路径都在，
+              不是抽象概念。
+              <span class="en-note">A real background memory-consolidation subsystem.</span>
             </p>
           </article>
           <article class="card">
             <div class="status gated">实装但受 gate 控制 / Real + gated</div>
-            <h3>UDS Inbox 跨会话通信</h3>
+            <h3>UDS Inbox 与并发会话</h3>
             <p>
-              消息 socket、peer surface、会话并发识别都存在，源码证据很直接。
-              <span class="en-note">Cross-session / peer messaging is real, not speculative.</span>
-            </p>
-          </article>
-          <article class="card">
-            <div class="status strong">强证据 / Strong evidence</div>
-            <h3>Teleport / Remote Sessions</h3>
-            <p>
-              远端会话创建、resume、ingress、branch 恢复整条链路都很深。
-              <span class="en-note">Remote session creation and recovery are deeply implemented.</span>
+              peer / session 消息面、socket 初始化、并发会话识别和对应工具链都是直接证据。
+              <span class="en-note">Cross-session messaging and peer coordination are real.</span>
             </p>
           </article>
           <article class="card">
             <div class="status gated">实装但受 gate 控制 / Real + gated</div>
-            <h3>Ultraplan 云端规划</h3>
+            <h3>Ultraplan 与 Ultrareview</h3>
             <p>
-              关键字触发、远端启动、CCR 轮询、传回本地的流程都在。
-              <span class="en-note">One of the strongest hidden-mode findings in the snapshot.</span>
-            </p>
-          </article>
-          <article class="card">
-            <div class="status strong">强证据 / Strong evidence</div>
-            <h3>Ultrareview 云端评审</h3>
-            <p>
-              有独立的启用逻辑、quota API、repo 尺寸判断和远端执行路径。
-              <span class="en-note">Remote review is clearly real and product-shaped.</span>
+              两者都有独立命令路径、使能逻辑、CCR 集成，以及 quota 或路由行为，看起来都已经具备产品形状。
+              <span class="en-note">Remote planning and remote review both look product-shaped.</span>
             </p>
           </article>
           <article class="card">
             <div class="status gated">实装但受 gate 控制 / Real + gated</div>
             <h3>Voice 语音模式</h3>
             <p>
-              <code>voice_stream</code>、提示栏、快捷键和 REPL 集成都有，但文件头也明确写了只在
-              <code>VOICE_MODE</code> build 下可达。
-              <span class="en-note">Real STT/voice surface, but explicitly build-gated.</span>
-            </p>
-          </article>
-          <article class="card">
-            <div class="status strong">强证据 / Strong evidence</div>
-            <h3>Advisor 顾问模型</h3>
-            <p>
-              有独立消息类型、CLI 配置、模型能力检查和 beta header 行为。
-              <span class="en-note">A first-class server-side advisor tool surface.</span>
+              <code>voice_stream</code> STT、输入栏交互、通知和 REPL 集成都存在，但文件头已明确写出其 build gate。
+              <span class="en-note">Real speech-input surface, but explicitly build-gated.</span>
             </p>
           </article>
           <article class="card">
             <div class="status strong">强证据 / Strong evidence</div>
             <h3>Claude In Chrome</h3>
             <p>
-              有浏览器命令、onboarding、extension reconnect 和 in-process MCP 支持。
-              <span class="en-note">Browser integration is clearly implemented, not hypothetical.</span>
-            </p>
-          </article>
-          <article class="card">
-            <div class="status strong">强证据 / Strong evidence</div>
-            <h3>Terminal Panel</h3>
-            <p>
-              <code>src/utils/terminalPanel.ts</code> 明确实现了基于 tmux 的内置终端侧栏。
-              <span class="en-note">Built-in shell sidecar with persistence when tmux is available.</span>
+              浏览器 onboarding、extension reconnect、命令面和 MCP server 接入都在，说明浏览器集成是明确实现的。
+              <span class="en-note">Browser integration is implemented, not hypothetical.</span>
             </p>
           </article>
           <article class="card">
             <div class="status gated">实装但受 gate 控制 / Real + gated</div>
-            <h3>Team Memory + Swarms</h3>
+            <h3>Team Memory 与多 Agent 协作</h3>
             <p>
-              <code>TEAMMEM</code>、TeamCreate、teammate spawning、coordinator mode 都是实打实的产品面。
+              <code>TEAMMEM</code>、TeamCreate、mailbox 协调、teammate spawning 和任务分发都是真实子系统，
+              只是并非所有构建都会默认打开。
               <span class="en-note">Real team-memory and multi-agent coordination stack.</span>
+            </p>
+          </article>
+          <article class="card">
+            <div class="status scoped">平台或权限约束 / Platform or entitlement scoped</div>
+            <h3>Computer Use 与 Advisor</h3>
+            <p>
+              两者实现都很深，但都不是“通用默认路径”。前者受平台和审批边界影响，后者是有模型和 header 逻辑的专门服务端工具面。
+              <span class="en-note">Deeply implemented, but scoped rather than baseline-on.</span>
             </p>
           </article>
         </div>
@@ -641,52 +711,84 @@
       <section class="panel section">
         <div class="section-head">
           <div>
-            <h2>需要保留意见的说法</h2>
-            <div class="dual">Claims That Need Caveats</div>
+            <h2>证据边界</h2>
+            <div class="dual">Snapshot Limits</div>
           </div>
           <p>
-            这部分不是说“错”，而是说如果想写成严谨的技术结论，就不能像海报那样一笔带过。
+            下面这些不是“没有”，而是当前 bundle 只能部分证明，或者根本不应该由源码结构本身来回答。
           </p>
         </div>
         <div class="grid caveats-grid">
           <article class="card">
-            <div class="status caveat">表述过强 / Over-read</div>
-            <h3>Daemon</h3>
+            <div class="status partial">只能部分验证 / Entrypoint-only evidence</div>
+            <h3>Self-Hosted Runner 与 Environment Runner</h3>
             <p>
-              源码里确实有 assistant daemon mode、daemon worker、cron/SDK daemon 相关内容，
-              但它并不足以证明一个通用、成熟、对外公开的后台常驻服务模式。
-              <span class="en-note">The direction is real; the poster wording is too confident.</span>
+              <code>src/entrypoints/cli.tsx</code> 里有真实 fast path，
+              但导入的实现目录并不在这份 snapshot 里，所以这里只能确认入口存在，不能确认完整子系统细节。
+              <span class="en-note">The entry paths are real, but the imported implementations are absent here.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status partial">只能部分验证 / Partially inspectable</div>
-            <h3>Self-Hosted Runner</h3>
+            <div class="status partial">需要更窄表述 / Needs narrower wording</div>
+            <h3>Daemon 相关模式</h3>
             <p>
-              <code>cli.tsx</code> 里有真实入口，但这份 snapshot 缺少导入的完整实现目录。
-              <span class="en-note">The entry path is real, but the full subsystem is not inspectable here.</span>
+              daemon worker、assistant daemon mode、cron 相关 daemon 行为都能看到，
+              但如果进一步把它概括成一个统一、成熟、通用的后台服务产品面，就超出了这份源码能直接证明的范围。
+              <span class="en-note">Daemon-related runtime slices are real, but broad product wording should stay narrower.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status caveat">统计口径问题 / Metric caveat</div>
-            <h3>500+ Runtime Gates</h3>
+            <div class="status nonclaim">不是源码结论 / Not a code claim</div>
+            <h3>公开发布状态</h3>
             <p>
-              这类数字只有在先定义“runtime gate”算什么之后才有意义。
-              <span class="en-note">Without a counting rule, this is not a stable technical metric.</span>
+              代码能说明“实现存在”“是否 gated”“是否带平台或 entitlement 约束”，
+              但不能单靠自己证明某能力是否已经公开发布、是否默认开启或是否只面向某客户层级。
+              <span class="en-note">Release status is not derivable from code structure alone.</span>
             </p>
           </article>
           <article class="card">
-            <div class="status caveat">不是源码结论 / Not a code claim</div>
-            <h3>Leak / Discovery Story</h3>
+            <div class="status nonclaim">不是源码结论 / Not a code claim</div>
+            <h3>来源与发现经过</h3>
             <p>
-              泄漏来源、谁先发现，属于 provenance 问题，不是源码结构本身能证明的结论。
-              <span class="en-note">Keep this in attribution notes, not in the feature verdicts.</span>
+              这类问题属于 provenance，不属于能力地图。应该放在 attribution note，而不是功能判断里。
+              <span class="en-note">Provenance belongs in attribution notes, not capability verdicts.</span>
             </p>
           </article>
         </div>
+      </section>
 
+      <section class="panel section">
+        <div class="section-head">
+          <div>
+            <h2>阅读方法</h2>
+            <div class="dual">Method</div>
+          </div>
+          <p>
+            这页故意写得保守。只要源码不能直接支撑，我就不会把它写进能力结论里。
+          </p>
+        </div>
+        <div class="method-grid">
+          <article class="method-card">
+            <h3>范围</h3>
+            <span>只看已提交的 bundle / committed bundle only</span>
+            <p>
+              所有判断都来自仓库内已提交的 <code>src/</code> snapshot 和同仓库内的统计脚本结果。
+              <span class="en-note">All conclusions come from the committed snapshot and repo-local counts.</span>
+            </p>
+          </article>
+          <article class="method-card">
+            <h3>证据规则</h3>
+            <span>实装、受控、部分可见 / implemented, gated, partial</span>
+            <p>
+              “实装”表示存在可执行代码或已接上的 UI / service 路径；“受控”表示能力真实存在但受 flags、平台或 entitlement 限制；
+              “部分可见”表示只有入口或局部，缺少完整子系统可供检查。
+              <span class="en-note">Implemented means wired code; gated means real but constrained; partial means only part of the subsystem is present.</span>
+            </p>
+          </article>
+        </div>
         <div class="footer-strip">
-          如果你想看纯英文版，打开
-          <a href="./feature-atlas.html">English feature atlas</a>。如果你想看更完整的长报告，打开
+          这页适合作为当前 snapshot 的能力清单，不适合作为“公开发布矩阵”。如果你想看纯英文版，打开
+          <a href="./feature-atlas.html">English version</a>；如果你想看完整长报告，打开
           <a href="./report.html">full HTML report</a>。
         </div>
       </section>

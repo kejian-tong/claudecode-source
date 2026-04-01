@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Claude Code Hidden Feature Atlas</title>
+    <title>Claude Code Source Capability Map</title>
     <style>
       :root {
         --paper: #ffffff;
@@ -158,6 +158,7 @@
         display: grid;
         grid-template-columns: minmax(0, 1.28fr) minmax(360px, 0.72fr);
         gap: 22px;
+        align-items: start;
       }
 
       .hero-main {
@@ -194,8 +195,8 @@
 
       h1 {
         margin-top: 20px;
-        font-size: clamp(34px, 4vw, 54px);
-        line-height: 0.96;
+        font-size: clamp(34px, 3.6vw, 50px);
+        line-height: 0.98;
         letter-spacing: -0.04em;
         white-space: nowrap;
       }
@@ -212,15 +213,35 @@
       .hero-main p,
       .summary-card p,
       .card p,
-      .count-card p {
+      .count-card p,
+      .method-card p {
         color: var(--muted);
         line-height: 1.6;
       }
 
       .hero-main p {
-        max-width: 66ch;
+        max-width: 68ch;
         margin: 18px 0 0;
         font-size: 18px;
+      }
+
+      .hero-points {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .hero-points li {
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
       }
 
       .hero-side {
@@ -231,7 +252,8 @@
 
       .summary-card,
       .count-card,
-      .card {
+      .card,
+      .method-card {
         border: 1px solid var(--line);
         border-radius: 22px;
         background: var(--paper-soft);
@@ -241,19 +263,14 @@
         padding: 22px;
       }
 
-      .summary-card.good {
+      .summary-card.scope {
         background: var(--green-fill);
         border-color: rgba(16, 185, 129, 0.24);
       }
 
-      .summary-card.caution {
+      .summary-card.boundary {
         background: var(--orange-fill);
         border-color: rgba(245, 158, 11, 0.24);
-      }
-
-      .summary-card.note {
-        background: var(--blue-fill);
-        border-color: rgba(37, 99, 235, 0.24);
       }
 
       .section {
@@ -270,19 +287,35 @@
       }
 
       .section-head p {
-        max-width: 72ch;
+        max-width: 74ch;
         margin: 0;
         color: var(--muted);
         line-height: 1.55;
       }
 
-      .count-grid {
+      .count-grid,
+      .grid,
+      .method-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 18px;
       }
 
-      .count-card {
+      .count-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .caveats-grid,
+      .method-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .count-card,
+      .card,
+      .method-card {
         padding: 22px;
       }
 
@@ -292,7 +325,8 @@
         line-height: 1;
       }
 
-      .count-card span {
+      .count-card span,
+      .method-card span {
         display: block;
         margin-top: 8px;
         font-size: 12px;
@@ -302,27 +336,15 @@
         color: var(--muted);
       }
 
-      .grid {
-        display: grid;
-        gap: 18px;
-      }
-
-      .features-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .caveats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .card {
-        padding: 22px;
-      }
-
       .status {
         margin-bottom: 12px;
         padding: 8px 12px;
         font-size: 12px;
+      }
+
+      .status.core {
+        background: var(--blue-fill);
+        color: var(--blue);
       }
 
       .status.strong {
@@ -335,24 +357,29 @@
         color: var(--purple);
       }
 
-      .status.caveat {
+      .status.scoped {
+        background: var(--teal-fill);
+        color: var(--teal);
+      }
+
+      .status.partial {
         background: var(--orange-fill);
         color: var(--orange);
       }
 
-      .status.partial {
+      .status.nonclaim {
         background: var(--rose-fill);
         color: var(--rose);
       }
 
-      .card h3 {
+      .card h3,
+      .method-card h3 {
         font-size: 23px;
         line-height: 1.08;
         margin-bottom: 8px;
       }
 
-      .card code,
-      .count-card code {
+      code {
         padding: 2px 6px;
         border-radius: 999px;
         background: rgba(23, 32, 51, 0.06);
@@ -371,7 +398,7 @@
         line-height: 1.55;
       }
 
-      @media (max-width: 1220px) {
+      @media (max-width: 1240px) {
         h1 {
           white-space: normal;
         }
@@ -381,7 +408,9 @@
         .hero,
         .count-grid,
         .features-grid,
-        .caveats-grid {
+        .caveats-grid,
+        .method-grid,
+        .hero-points {
           grid-template-columns: 1fr;
         }
 
@@ -398,7 +427,7 @@
       <div class="topbar">
         <div class="top-left">
           <a class="pill-link" href="./">Back To Analysis Hub</a>
-          <a class="pill-link" href="./feature-atlas-zh.html">Chinese / 中文版</a>
+          <a class="pill-link" href="./feature-atlas-zh.html">Chinese Version</a>
         </div>
         <div class="top-metrics">
           <div class="metric blue">
@@ -411,46 +440,44 @@
           </div>
           <div class="metric purple">
             <strong>89</strong>
-            <span>feature symbols</span>
+            <span>exact feature symbols</span>
           </div>
         </div>
       </div>
 
       <header class="hero">
         <div class="panel hero-main">
-          <div class="kicker">Source-backed compact verdict</div>
-          <h1>Claude Code Hidden Feature Atlas</h1>
-          <div class="hero-sub">Gated, preview, and partially inspectable surfaces in one page</div>
+          <div class="kicker">Source-only capability map</div>
+          <h1>Claude Code Source Capability Map</h1>
+          <div class="hero-sub">What this snapshot clearly implements, what it gates, and what remains partial</div>
           <p>
-            This is the stricter answer to the "hidden Claude Code features"
-            discussion. It separates what is clearly implemented in the source
-            tree from what is only gated, partially inspectable, or overstated
-            by poster-style summaries.
+            This page is a compact reading of the committed <code>src/</code>
+            tree only. It groups visible capability surfaces by evidence
+            strength and avoids making release-status, provenance, or marketing
+            claims that the code itself cannot prove.
           </p>
+          <ul class="hero-points">
+            <li><strong>Runtime spine</strong><br />Persistence, model loop, tools, remote execution, and UI are deeply implemented.</li>
+            <li><strong>Specialized surfaces</strong><br />Many notable families are real, but gated, scoped, or variant-driven.</li>
+            <li><strong>Evidence boundary</strong><br />Missing imported subsystems and non-code questions stay outside the verdict.</li>
+          </ul>
         </div>
         <div class="panel hero-side">
-          <div class="summary-card good">
-            <h3>What the viral summary gets right</h3>
+          <div class="summary-card scope">
+            <h3>What this snapshot clearly shows</h3>
             <p>
-              Buddy, KAIROS, Auto-Dream, Ultraplan, Ultrareview, Voice,
-              Teleport, Chrome, Terminal Panel, Team Memory, and swarm-style
-              coordination are all real feature families in this snapshot.
+              The tree contains a product-scale runtime with session
+              persistence, tool orchestration, remote execution, extension
+              plumbing, and a large amount of variant-driven capability surface.
             </p>
           </div>
-          <div class="summary-card caution">
-            <h3>What it gets too confident about</h3>
+          <div class="summary-card boundary">
+            <h3>What still needs restraint</h3>
             <p>
-              "Daemon" and "self-hosted runner" need caveats, and counts like
-              <code>500+ runtime gates</code> are only valid if the counting
-              method is disclosed.
-            </p>
-          </div>
-          <div class="summary-card note">
-            <h3>Safest one-line judgment</h3>
-            <p>
-              This source tree looks like a shipped core runtime surrounded by a
-              large ring of gated, preview, enterprise, and build-variant
-              capabilities.
+              Some entry paths are real while their imported implementations are
+              missing from this snapshot. Build flags, platform constraints, and
+              entitlements also mean “implemented” does not automatically mean
+              “universally on”.
             </p>
           </div>
         </div>
@@ -459,46 +486,126 @@
       <section class="panel section">
         <div class="section-head">
           <div>
-            <h2>Count Hygiene</h2>
+            <h2>Measured Snapshot</h2>
           </div>
           <p>
-            These are the safest compact numbers to lead with. They come from
-            exact repo-level counting rules rather than poster-style round
-            numbers.
+            These counts are the cleanest compact facts to lead with because
+            they come from direct repository-level rules instead of loose
+            category labels.
           </p>
         </div>
         <div class="count-grid">
           <div class="count-card">
+            <strong>1,902</strong>
+            <span>files under <code>src/</code></span>
+            <p>Large enough to behave like a product platform rather than a narrow CLI.</p>
+          </div>
+          <div class="count-card">
+            <strong>513,237</strong>
+            <span>TS / TSX / JS / JSX lines</span>
+            <p>Enough code volume to justify architectural and maintenance risk analysis.</p>
+          </div>
+          <div class="count-card">
             <strong>89</strong>
-            <span>unique all-caps <code>feature('FLAG')</code> symbols</span>
-            <p>Good headline metric for variant pressure.</p>
+            <span>unique <code>feature('FLAG')</code> symbols</span>
+            <p>The exact all-caps grep count is the strongest compact signal for build-time variant pressure.</p>
           </div>
           <div class="count-card">
             <strong>941</strong>
             <span><code>feature('...')</code> call sites</span>
-            <p>Much closer to what people mean when they say the tree is heavily gated.</p>
+            <p>Better than slogans for describing how widely feature gating influences behavior.</p>
           </div>
-          <div class="count-card">
-            <strong>86</strong>
-            <span>command surfaces</span>
-            <p>Broader than slash commands, but a much more stable repo-level count.</p>
-          </div>
-          <div class="count-card">
-            <strong>42</strong>
-            <span>tool directories</span>
-            <p>Useful for breadth, but not the same thing as "agent tools".</p>
-          </div>
+        </div>
+        <div class="footer-strip">
+          Supporting breadth counts from the same snapshot: <code>86</code>
+          command surfaces, <code>42</code> tool directories,
+          <code>645</code> dynamic imports, <code>104</code> hook files,
+          <code>23</code> MCP files, and <code>46</code> plugin-facing files.
         </div>
       </section>
 
       <section class="panel section">
         <div class="section-head">
           <div>
-            <h2>Strongly Supported Feature Families</h2>
+            <h2>Broadly Implemented Runtime Spine</h2>
           </div>
           <p>
-            These are the poster claims that are clearly backed by real source
-            implementation, even when some of them are still gated.
+            These are not edge curiosities. They form the main operational
+            backbone of the snapshot and are visible across the runtime, UI, and
+            persistence layers.
+          </p>
+        </div>
+        <div class="grid features-grid">
+          <article class="card">
+            <div class="status core">Core runtime</div>
+            <h3>Session Persistence + Compaction</h3>
+            <p>
+              <code>src/utils/sessionStorage.ts</code>,
+              <code>src/services/compact/compact.ts</code>, transcript files,
+              and resume logic show that long-lived state is a first-class
+              runtime substrate rather than a chat log afterthought.
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">Core runtime</div>
+            <h3>Query And Model Orchestration</h3>
+            <p>
+              <code>src/QueryEngine.ts</code>, <code>src/services/api/claude.ts</code>,
+              and <code>src/main.tsx</code> together show a central model loop
+              with streaming, hooks, beta behaviors, and cross-turn state
+              handling.
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">Core runtime</div>
+            <h3>Permissioned Tool Execution</h3>
+            <p>
+              <code>src/tools/</code>, shell safety modules, hook plumbing, and
+              approval components make tool orchestration one of the most
+              developed and defended areas in the tree.
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">Core runtime</div>
+            <h3>Remote Sessions + CCR</h3>
+            <p>
+              <code>src/cli/</code>, remote transports, teleport flows, and
+              ingress code show that remote execution is not an add-on. It is a
+              structural part of how this runtime scales beyond a single local
+              turn.
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">Core runtime</div>
+            <h3>Extension Plumbing</h3>
+            <p>
+              MCP, plugins, bundled skills, hook files, and browser-facing tool
+              surfaces are wired into the same runtime rather than living in a
+              separate ecosystem.
+            </p>
+          </article>
+          <article class="card">
+            <div class="status core">Core runtime</div>
+            <h3>Interactive UI + Terminal Surfaces</h3>
+            <p>
+              <code>src/screens/REPL.tsx</code>, <code>src/components/</code>,
+              <code>src/ink/</code>, and the terminal panel utilities show a
+              fully interactive shell application, not just a print-mode entry
+              script.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <div class="section-head">
+          <div>
+            <h2>Specialized Capability Families</h2>
+          </div>
+          <p>
+            These families are clearly implemented in the snapshot, but many of
+            them are gated, build-specific, entitlement-aware, or otherwise not
+            safe to describe as default-on behavior.
           </p>
         </div>
         <div class="grid features-grid">
@@ -506,106 +613,84 @@
             <div class="status gated">Real + gated</div>
             <h3>Buddy / Companion</h3>
             <p>
-              <code>src/buddy/</code> is substantial: 18 species, 5 rarities,
-              pet reactions, prompt triggers, REPL rendering, and persisted
-              companion state. This is not a stray joke string.
+              <code>src/buddy/</code> is a substantial subsystem with 18
+              species, 5 rarities, REPL rendering, prompt triggers, and
+              persisted companion state. This is clearly more than stray UI
+              copy.
             </p>
           </article>
           <article class="card">
             <div class="status gated">Real + gated</div>
             <h3>KAIROS Family</h3>
             <p>
-              Assistant mode, Brief, Proactive, and Channels span
+              Assistant mode, Brief, Proactive, and Channels cut across
               <code>src/main.tsx</code>, tools, services, and UI. The family is
-              large and real, but variant-driven rather than baseline.
+              broad, but strongly variant-driven.
             </p>
           </article>
           <article class="card">
             <div class="status strong">Strong evidence</div>
-            <h3>Auto-Dream</h3>
+            <h3>Auto-Dream Memory Consolidation</h3>
             <p>
-              <code>src/services/autoDream/autoDream.ts</code> implements
-              background memory consolidation with lock handling, scheduler
-              checks, a forked task path, and completion logic.
+              <code>src/services/autoDream/</code> includes scheduler checks,
+              locking, a dedicated consolidation prompt, a forked task path,
+              and completion handling. It is a real background memory subsystem.
             </p>
           </article>
           <article class="card">
             <div class="status gated">Real + gated</div>
-            <h3>UDS Inbox</h3>
+            <h3>UDS Inbox + Concurrent Sessions</h3>
             <p>
-              Cross-session / peer messaging is source-backed through
-              <code>feature('UDS_INBOX')</code>, messaging socket setup, and
-              peer-facing tools such as <code>ListPeersTool</code>.
-            </p>
-          </article>
-          <article class="card">
-            <div class="status strong">Strong evidence</div>
-            <h3>Teleport / Remote Sessions</h3>
-            <p>
-              <code>teleportToRemote</code>, <code>--teleport</code>, CCR
-              session creation, session ingress, resume, and branch recovery are
-              all deeply implemented.
+              The tree has direct evidence for peer/session messaging, socket
+              setup, concurrent-session awareness, and tools that operate on the
+              peer surface behind <code>feature('UDS_INBOX')</code>.
             </p>
           </article>
           <article class="card">
             <div class="status gated">Real + gated</div>
-            <h3>Ultraplan</h3>
+            <h3>Ultraplan + Ultrareview</h3>
             <p>
-              <code>feature('ULTRAPLAN')</code>, keyword routing, remote launch,
-              CCR polling, and "teleport back to terminal" behavior all exist.
-            </p>
-          </article>
-          <article class="card">
-            <div class="status strong">Strong evidence</div>
-            <h3>Ultrareview</h3>
-            <p>
-              The remote review command has its own enablement gate, quota API,
-              repo-size handling, and dedicated remote execution path.
+              Remote planning and remote review each have dedicated command
+              flows, enablement logic, CCR integration, and quota or routing
+              behavior. These look product-shaped, not experimental stubs.
             </p>
           </article>
           <article class="card">
             <div class="status gated">Real + gated</div>
             <h3>Voice Mode</h3>
             <p>
-              <code>voice_stream</code> STT, prompt footer UX, keybindings, and
-              REPL integration exist, but the file header itself says it is only
-              reachable in builds gated by <code>VOICE_MODE</code>.
+              <code>src/services/voiceStreamSTT.ts</code> plus prompt footer
+              UI, notifications, and REPL integration show a real speech input
+              path. The file header also explicitly says the surface is build
+              gated by <code>VOICE_MODE</code>.
             </p>
           </article>
           <article class="card">
             <div class="status strong">Strong evidence</div>
-            <h3>Advisor</h3>
+            <h3>Claude In Chrome + Browser Integration</h3>
             <p>
-              The advisor tool is a real server-side surface with dedicated
-              message/result types, CLI configuration, model checks, and API
-              beta-header behavior.
-            </p>
-          </article>
-          <article class="card">
-            <div class="status strong">Strong evidence</div>
-            <h3>Claude In Chrome</h3>
-            <p>
-              Browser integration is not speculative. There is a Chrome command,
-              onboarding UI, extension reconnect flow, and in-process MCP server
-              support.
-            </p>
-          </article>
-          <article class="card">
-            <div class="status strong">Strong evidence</div>
-            <h3>Terminal Panel</h3>
-            <p>
-              <code>src/utils/terminalPanel.ts</code> is a real built-in
-              terminal sidecar with tmux-backed persistence and a documented
-              <code>Meta+J</code> toggle path.
+              Browser onboarding, extension reconnect, MCP server wiring, and
+              command surfaces make this an implemented browser integration
+              family, not a hypothetical future note.
             </p>
           </article>
           <article class="card">
             <div class="status gated">Real + gated</div>
-            <h3>Team Memory + Swarms</h3>
+            <h3>Team Memory + Multi-Agent Coordination</h3>
             <p>
-              <code>TEAMMEM</code>, TeamCreate, teammate spawning, coordinator
-              mode, shared task lists, and mailbox-style coordination are all
-              real. The surface is substantial, but not universally baseline-on.
+              <code>TEAMMEM</code>, TeamCreate, mailbox-style coordination,
+              teammate spawning, and multi-agent task routing are all real
+              subsystems, though they are not uniformly baseline-on.
+            </p>
+          </article>
+          <article class="card">
+            <div class="status scoped">Platform or entitlement scoped</div>
+            <h3>Computer Use + Advisor</h3>
+            <p>
+              Both surfaces are deeply implemented, but they are not generic
+              baseline runtime behavior. Computer Use is platform/policy
+              constrained, while Advisor is a specialized server-side tool path
+              with model and header logic.
             </p>
           </article>
         </div>
@@ -614,59 +699,95 @@
       <section class="panel section">
         <div class="section-head">
           <div>
-            <h2>Claims That Need Caveats</h2>
+            <h2>Snapshot Limits</h2>
           </div>
           <p>
-            These are the places where poster-style summaries usually get ahead
-            of what this specific snapshot can safely prove.
+            These are the claims this bundle can only partially support, or
+            should not attempt to answer from code structure alone.
           </p>
         </div>
         <div class="grid caveats-grid">
           <article class="card">
-            <div class="status caveat">Over-read</div>
-            <h3>Daemon</h3>
+            <div class="status partial">Entrypoint-only evidence</div>
+            <h3>Self-Hosted Runner + Environment Runner</h3>
             <p>
-              The snapshot definitely contains assistant daemon mode, daemon
-              workers, and cron/SDK daemon references. What it does not cleanly
-              prove is a general always-on background service mode in the broad
-              marketing sense.
+              <code>src/entrypoints/cli.tsx</code> contains real fast paths for
+              <code>self-hosted-runner</code> and
+              <code>environment-runner</code>, but the imported implementation
+              directories are absent from this snapshot.
             </p>
           </article>
           <article class="card">
-            <div class="status partial">Partially inspectable</div>
-            <h3>Self-Hosted Runner</h3>
+            <div class="status partial">Needs narrower wording</div>
+            <h3>Daemon-Related Modes</h3>
             <p>
-              <code>src/entrypoints/cli.tsx</code> contains a real
-              <code>SELF_HOSTED_RUNNER</code> fast path, but the imported
-              implementation directory is missing from this snapshot.
+              The tree clearly contains daemon workers, assistant daemon mode,
+              and cron-related daemon behavior. What it does not cleanly prove
+              is a broad, general-purpose product story beyond those observed
+              runtime slices.
             </p>
           </article>
           <article class="card">
-            <div class="status caveat">Metric caveat</div>
-            <h3>"500+ Runtime Gates"</h3>
+            <div class="status nonclaim">Not a code claim</div>
+            <h3>Public Release Status</h3>
             <p>
-              This is only safe if the counting rule is stated. Exact grep
-              supports <code>89</code> unique feature symbols and
-              <code>941</code> feature call sites, but "runtime gate" is a much
-              fuzzier bucket.
+              The snapshot can show implementation, gating, and platform scope.
+              It cannot by itself establish whether a surface is public,
+              region-limited, enterprise-only, or unpublished in the external
+              product sense.
             </p>
           </article>
           <article class="card">
-            <div class="status caveat">Not a code claim</div>
-            <h3>Leak / Discovery Story</h3>
+            <div class="status nonclaim">Not a code claim</div>
+            <h3>Provenance Or Discovery Story</h3>
             <p>
-              Provenance and disclosure chronology are not things the source
-              tree can prove by itself. They belong in attribution notes, not in
-              the technical feature verdicts.
+              Upstream history, exposure path, and who discovered the snapshot
+              are attribution questions. They do not belong inside a
+              source-structure capability verdict.
             </p>
           </article>
         </div>
+      </section>
 
+      <section class="panel section">
+        <div class="section-head">
+          <div>
+            <h2>Method</h2>
+          </div>
+          <p>
+            The page is intentionally conservative. It only says what the
+            committed tree can directly support and keeps adjacent speculation
+            out of the capability inventory.
+          </p>
+        </div>
+        <div class="method-grid">
+          <article class="method-card">
+            <h3>Scope</h3>
+            <span>only the committed bundle</span>
+            <p>
+              Everything here is derived from the checked-in snapshot under
+              <code>src/</code>, plus repo-local counts used elsewhere in this
+              bundle.
+            </p>
+          </article>
+          <article class="method-card">
+            <h3>Evidence Rule</h3>
+            <span>implemented, gated, partial</span>
+            <p>
+              Implemented means executable code or wired UI/service paths.
+              Gated means the surface exists but is controlled by flags,
+              variants, entitlements, or platform scope. Partial means the
+              entrypoint exists but the full subsystem is not fully inspectable
+              here.
+            </p>
+          </article>
+        </div>
         <div class="footer-strip">
-          Open the <a href="./feature-atlas-zh.html">Chinese / bilingual atlas</a>
-          for the same conclusion in a Chinese-first layout, or jump back to the
+          Use this page as a capability inventory for this snapshot, not as a
+          release matrix. Open the <a href="./feature-atlas-zh.html">Chinese version</a>
+          for the same analysis in a Chinese-first layout, or go to the
           <a href="./report.html">full HTML report</a> for the longer
-          architectural analysis.
+          architectural reading.
         </div>
       </section>
     </div>

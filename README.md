@@ -15,11 +15,11 @@ Around March 31, 2026, community and media coverage widely credited Chaofan Shou
 ## Start Here
 
 - [Open interactive landing page](https://kejian-tong.github.io/claudecode-source/)
-- [Open hidden / gated feature atlas (English)](https://kejian-tong.github.io/claudecode-source/feature-atlas.html)
-- [Open hidden / gated feature atlas (中文 / bilingual)](https://kejian-tong.github.io/claudecode-source/feature-atlas-zh.html)
+- [Open source capability map (English)](https://kejian-tong.github.io/claudecode-source/feature-atlas.html)
+- [Open source capability map (中文)](https://kejian-tong.github.io/claudecode-source/feature-atlas-zh.html)
 - [Open full HTML analysis report](https://kejian-tong.github.io/claudecode-source/report.html)
 - [Read full Markdown analysis report](ANALYSIS_REPORT.md)
-- [Read compact hidden-feature evidence map](FEATURE_ATLAS.md)
+- [Read compact source capability summary](FEATURE_ATLAS.md)
 - [Read user-facing guide](USER_GUIDE.md)
 - [Read engineering guide](MAINTAINER_GUIDE.md)
 - [Browse visual assets](docs/assets/)
@@ -35,7 +35,7 @@ Around March 31, 2026, community and media coverage widely credited Chaofan Shou
 ## Key Conclusions
 
 - This is a product-scale terminal agent runtime, not a small CLI.
-- The core looks shipped and mature; a large outer ring is gated, preview, or internal-only.
+- The core runtime is deeply implemented and mature; a large outer ring is gated, preview, or internal-only.
 - The strongest areas are tool safety, session persistence, compaction, and extension architecture.
 - The biggest liabilities are hotspot files, `utils/` centralization, and feature-flag complexity.
 

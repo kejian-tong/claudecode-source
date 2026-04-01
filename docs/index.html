@@ -771,7 +771,7 @@
   <body>
     <div class="shell">
       <div class="site-top">
-        <div class="site-kicker">Source-derived technical atlas</div>
+        <div class="site-kicker">Source-based technical documentation</div>
         <div class="top-metrics">
           <div class="metric-chip blue">
             <strong>1,902</strong>
@@ -782,8 +782,8 @@
             <span>LOC analyzed</span>
           </div>
           <div class="metric-chip purple">
-            <strong>90</strong>
-            <span>feature flags</span>
+            <strong>89</strong>
+            <span>exact feature symbols</span>
           </div>
         </div>
       </div>
@@ -799,8 +799,8 @@
           </p>
           <div class="cta-row">
             <a class="cta primary" href="./report.html">Open Full HTML Report</a>
-            <a class="cta secondary" href="./feature-atlas.html">Feature Atlas EN</a>
-            <a class="cta secondary" href="./feature-atlas-zh.html">Feature Atlas 中文</a>
+            <a class="cta secondary" href="./feature-atlas.html">Capability Map EN</a>
+            <a class="cta secondary" href="./feature-atlas-zh.html">Capability Map 中文</a>
             <a class="cta secondary" href="./assets/claude-code-system-architecture.png">Architecture PNG</a>
             <a class="cta secondary" href="./assets/claude-code-how-it-works.gif">Runtime GIF</a>
             <a class="cta secondary" href="./assets/queryengine-tool-sequence.gif">Sequence GIF</a>
@@ -818,9 +818,9 @@
             <div class="stat-note">Large enough to behave like a product platform, not a narrow CLI.</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Feature Flags</div>
-            <div class="stat-value">90</div>
-            <div class="stat-note">Strong variant pressure and product-surface gating.</div>
+            <div class="stat-label">Feature Symbols</div>
+            <div class="stat-value">89</div>
+            <div class="stat-note">Exact all-caps <code>feature('FLAG')</code> count from the committed snapshot.</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Dynamic Imports</div>
@@ -853,16 +853,16 @@
         </div>
         <div class="launch-grid">
           <a class="launch-card" href="./feature-atlas.html">
-            <span class="launch-kicker">Compact Verdict</span>
-            <div class="launch-title">Feature Atlas (English)</div>
-            <div class="launch-copy">A stricter one-page answer to the "hidden features" discussion, separating strong source evidence from over-read poster claims.</div>
-            <div class="launch-meta">Open English atlas →</div>
+            <span class="launch-kicker">Compact Capability Map</span>
+            <div class="launch-title">Source Capability Map (English)</div>
+            <div class="launch-copy">A compact, source-only reading of what this snapshot clearly implements, what it gates, and what remains only partially inspectable.</div>
+            <div class="launch-meta">Open English capability map →</div>
           </a>
           <a class="launch-card" href="./feature-atlas-zh.html">
-            <span class="launch-kicker">Bilingual</span>
-            <div class="launch-title">Feature Atlas (中文 / English)</div>
-            <div class="launch-copy">A Chinese-first version with English counterparts, tuned for sharing and quick reading without losing the evidence-level caveats.</div>
-            <div class="launch-meta">Open bilingual atlas →</div>
+            <span class="launch-kicker">Chinese First</span>
+            <div class="launch-title">Source Capability Map (中文)</div>
+            <div class="launch-copy">A Chinese-first version of the same source-only capability reading, with English counterparts for sharing and cross-checking.</div>
+            <div class="launch-meta">Open Chinese capability map →</div>
           </a>
           <a class="launch-card" href="./report.html">
             <span class="launch-kicker">Primary Report</span>
@@ -931,8 +931,8 @@
         </div>
         <div class="findings">
           <article class="finding">
-            <strong>The core looks shipped; the perimeter does not</strong>
-            <p>The source reads like a mature released runtime surrounded by many gated, preview, ant-only, and build-variant features, including BUDDY companion flows and computer-use surfaces.</p>
+            <strong>The core runtime is deeply implemented</strong>
+            <p>The source reads like a mature runtime core surrounded by many gated, preview, ant-only, and build-variant surfaces, including BUDDY companion flows and computer-use integrations.</p>
           </article>
           <article class="finding">
             <strong>`utils/` is the gravity well</strong>
@@ -948,7 +948,7 @@
           </article>
           <article class="finding">
             <strong>Variant pressure is high</strong>
-            <p>90 feature flags and 645 dynamic imports suggest strong product segmentation and performance-aware runtime shaping.</p>
+            <p>89 exact feature symbols and 645 dynamic imports suggest strong product segmentation and performance-aware runtime shaping.</p>
           </article>
           <article class="finding">
             <strong>Extension surfaces are first-class</strong>
