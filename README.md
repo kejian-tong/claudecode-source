@@ -2,15 +2,28 @@
 
 This repository packages a deep source-level analysis of the Claude Code snapshot in `src/`, plus HTML reports, architecture visuals, GIF walkthroughs, and maintainer/user guides.
 
-## Provenance Note
+## Disclaimer And Intended Use
 
-Anthropic maintains an official public Claude Code repository at [`anthropics/claude-code`](https://github.com/anthropics/claude-code).
+This repository is an independent analysis, documentation, and visualization bundle built for learning, research, technical commentary, and educational use.
 
-This repository is not that official Anthropic repository. It is an independent analysis, documentation, and visualization bundle built around the Claude Code source snapshot committed here under `src/`.
+It is not an official Anthropic repository, product release, or commercial distribution of Claude Code. Nothing in this repository should be read as granting any license, trademark permission, redistribution right, or commercial-use right to Anthropic-owned code, marks, or services.
 
-It does not claim affiliation with Anthropic, and it does not make claims about the provenance relationship between this snapshot and Anthropic's current upstream repository.
+If you want to use Claude Code commercially, operationally, or in production, use Anthropic's official channels, terms, and licenses instead of relying on this repository.
 
-Around March 31, 2026, community and media coverage widely credited Chaofan Shou ([@Fried_rice on X](https://x.com/Fried_rice/status/2038894956459290963)) with publicly flagging the source-map exposure that drew attention to this code snapshot. This repository includes that attribution as a reference point, but does not independently verify "first discovery" priority claims.
+If you are a rights holder and believe something here should be corrected, limited, or removed, please contact the repository owner through GitHub.
+
+## Official Channels And Source Context
+
+Anthropic publicly distributes Claude Code through official channels, including:
+
+- the official GitHub repository: [`anthropics/claude-code`](https://github.com/anthropics/claude-code)
+- the official npm package: [`@anthropic-ai/claude-code`](https://www.npmjs.com/package/@anthropic-ai/claude-code)
+
+This repository is separate from those official channels. It analyzes the source snapshot committed here under `src/` as a standalone technical artifact.
+
+This repository does not independently certify the exact extraction workflow, package version, or file-by-file provenance relationship between the committed `src/` tree and Anthropic's current upstream releases. It only states that Claude Code itself is officially distributed by Anthropic through the channels above.
+
+Around March 31, 2026, community reporting widely credited Chaofan Shou ([@Fried_rice on X](https://x.com/Fried_rice/status/2038894956459290963)) with publicly drawing attention to this snapshot. That attribution is included only as historical context, not as a source-code conclusion.
 
 ## Start Here
 
