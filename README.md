@@ -2,6 +2,8 @@
 
 This repository packages a deep source-level analysis of the Claude Code snapshot in `src/`, plus HTML reports, architecture visuals, GIF walkthroughs, and maintainer/user guides.
 
+It also now includes an additional independently written source-analysis report in both Chinese and English, with Markdown and PDF outputs under `reports/`.
+
 ## Disclaimer And Intended Use
 
 This repository is an independent analysis, documentation, and visualization bundle built for learning, research, technical commentary, and educational use.
@@ -36,6 +38,10 @@ Around March 31, 2026, community reporting widely credited Chaofan Shou ([@Fried
 - [Open source capability map (中文)](https://kejian-tong.github.io/claudecode-source/feature-atlas-zh.html)
 - [Open full HTML analysis report](https://kejian-tong.github.io/claudecode-source/report.html)
 - [Read full Markdown analysis report](ANALYSIS_REPORT.md)
+- [Read independent Chinese source-analysis report](reports/claude-code-source-analysis.zh.md)
+- [Read independent English source-analysis report](reports/claude-code-source-analysis.en.md)
+- [Open Chinese PDF report](reports/claude-code-source-analysis.zh.pdf)
+- [Open English PDF report](reports/claude-code-source-analysis.en.pdf)
 - [Read compact source capability summary](FEATURE_ATLAS.md)
 - [Read user-facing guide](USER_GUIDE.md)
 - [Read engineering guide](MAINTAINER_GUIDE.md)
@@ -46,6 +52,7 @@ Around March 31, 2026, community reporting widely credited Chaofan Shou ([@Fried
 - A large source snapshot under `src/`
 - An interactive documentation landing page under `docs/`
 - A full HTML analysis report and a full Markdown analysis report
+- A separate independently written bilingual source-analysis report in `reports/`
 - Architecture diagrams, runtime GIFs, hotspot/risk visuals, and extension maps
 - Separate user and maintainer guides
 
@@ -60,6 +67,7 @@ Around March 31, 2026, community reporting widely credited Chaofan Shou ([@Fried
 
 - `src/` — analyzed source snapshot
 - `docs/` — landing page, HTML report, and visual assets
-- `scripts/` — generators for diagrams and report assets
+- `reports/` — independent Chinese and English source-analysis reports in Markdown and PDF
+- `scripts/` — generators for diagrams, report assets, and PDF export helpers
 
 The root `README.md` is intentionally short. The detailed analysis now lives in [`ANALYSIS_REPORT.md`](ANALYSIS_REPORT.md).
