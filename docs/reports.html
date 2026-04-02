@@ -43,7 +43,7 @@
       }
 
       .shell {
-        max-width: 1240px;
+        max-width: 1320px;
         margin: 0 auto;
         padding: 28px 28px 72px;
       }
@@ -120,7 +120,7 @@
       }
 
       .hero {
-        grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+        grid-template-columns: minmax(0, 1.32fr) minmax(320px, 0.68fr);
         align-items: stretch;
       }
 
@@ -189,9 +189,10 @@
 
       h1 {
         margin-top: 18px;
-        font-size: clamp(36px, 4.2vw, 56px);
+        font-size: clamp(34px, 3.5vw, 48px);
         line-height: 0.95;
         letter-spacing: -0.04em;
+        white-space: nowrap;
       }
 
       h2 {
@@ -338,6 +339,10 @@
         .artifact-grid,
         .support-grid {
           grid-template-columns: 1fr;
+        }
+
+        h1 {
+          white-space: normal;
         }
       }
 
